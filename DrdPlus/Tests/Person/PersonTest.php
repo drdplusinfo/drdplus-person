@@ -2,6 +2,8 @@
 namespace DrdPlus\Person;
 
 use Drd\Genders\Gender;
+use DrdPlus\Codes\ProfessionCodes;
+use DrdPlus\Codes\RaceCodes;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\ExceptionalityProperties;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
@@ -13,9 +15,9 @@ use DrdPlus\Person\ProfessionLevels\LevelRank;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
-use DrdPlus\PersonProperties\NextLevelsProperties;
 use DrdPlus\Professions\Profession;
 use DrdPlus\Properties\Base\Agility;
+use DrdPlus\Properties\Base\BaseProperty;
 use DrdPlus\Properties\Base\Charisma;
 use DrdPlus\Properties\Base\Intelligence;
 use DrdPlus\Properties\Base\Knack;
@@ -23,17 +25,15 @@ use DrdPlus\Properties\Base\Strength;
 use DrdPlus\Properties\Base\Will;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
-use DrdPlus\Tables\Measurements\Experiences\ExperiencesTable;
-use DrdPlus\Tables\Measurements\Fatigue\FatigueTable;
-use DrdPlus\Tables\Measurements\Weight\WeightTable;
-use DrdPlus\Tables\Measurements\Wounds\WoundsTable;
 use DrdPlus\Tables\Tables;
 use DrdPlus\Tests\Tools\TestWithMockery;
 
 class PersonTest extends TestWithMockery
 {
 
-    /** @test */
+    /**
+     * @test
+     */
     public function can_create_instance()
     {
         $instance = new Person(
@@ -46,13 +46,15 @@ class PersonTest extends TestWithMockery
             $this->createBackground(),
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
-            $this->createTables()
+            new Tables()
         );
         $this->assertNotNull($instance);
         $this->assertNull($instance->getId());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function returns_same_race_as_got()
     {
         $person = new Person(
@@ -65,12 +67,14 @@ class PersonTest extends TestWithMockery
             $this->createBackground(),
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
-            $this->createTables()
+            new Tables()
         );
         $this->assertSame($race, $person->getRace());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function returns_same_items_as_got()
     {
         $person = new Person(
@@ -83,7 +87,7 @@ class PersonTest extends TestWithMockery
             $background = $this->createBackground(),
             $skills = $this->createPersonSkills(),
             $weighInKgAdjustment = $this->createWeightInKgAdjustment(),
-            $this->createTables()
+            new Tables()
         );
         $this->assertSame($race, $person->getRace());
         $this->assertSame($gender, $person->getGender());
@@ -97,8 +101,10 @@ class PersonTest extends TestWithMockery
         // note: tables are for inner purpose only, does not have getter
     }
 
-    /** @test */
-    public function can_change_name()
+    /**
+     * @test
+     */
+    public function I_can_change_name()
     {
         $person = new Person(
             $this->createRace(),
@@ -110,7 +116,7 @@ class PersonTest extends TestWithMockery
             $this->createBackground(),
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
-            $this->createTables()
+            new Tables()
         );
         NameType::registerSelf();
         $person->setName($name = Name::getEnum($nameString = 'foo'));
@@ -127,41 +133,35 @@ class PersonTest extends TestWithMockery
     private function createRace()
     {
         $race = $this->mockery(Race::class);
+        $race->shouldReceive('getProperty')
+            ->andReturn(0);
         $race->shouldReceive('getStrengthModifier')
-            ->atLeast()
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getAgilityModifier')
-            ->atLeast()
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getKnackModifier')
-            ->atLeast()
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getWillModifier')
-            ->atLeast()
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getIntelligenceModifier')
-            ->atLeast()
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getCharismaModifier')
-            ->atLeast()
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getToughnessModifier')
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getSizeModifier')
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getSensesModifier')
-            ->once()
             ->andReturn(0);
         $race->shouldReceive('getWeightInKg')
-            ->once()
+            ->andReturn(0);
+        $race->shouldReceive('getSize')
+            ->andReturn(0);
+        $race->shouldReceive('getRaceCode')
+            ->andReturn(RaceCodes::HUMAN);
+        $race->shouldReceive('getSubraceCode')
+            ->andReturn(RaceCodes::COMMON);
+        $race->shouldReceive('getSenses')
             ->andReturn(0);
 
         return $race;
@@ -182,39 +182,32 @@ class PersonTest extends TestWithMockery
     {
         $exceptionality = $this->mockery(Exceptionality::class);
         $exceptionality->shouldReceive('getExceptionalityProperties')
-            ->atLeast()
-            ->once()
             ->andReturn($exceptionalityProperties = $this->mockery(ExceptionalityProperties::class));
+        $exceptionalityProperties->shouldReceive('getProperty')
+            ->andReturn($property = $this->mockery(BaseProperty::class));
+        $property->shouldReceive('getValue')
+            ->andReturn(0);
         $exceptionalityProperties->shouldReceive('getStrength')
-            ->atLeast()
-            ->once()
             ->andReturn($strength = $this->mockery(Strength::class));
         $strength->shouldReceive('getValue')
             ->andReturn(0);
         $exceptionalityProperties->shouldReceive('getAgility')
-            ->atLeast()
-            ->once()
             ->andReturn($agility = $this->mockery(Agility::class));
         $agility->shouldReceive('getValue')
             ->andReturn(0);
         $exceptionalityProperties->shouldReceive('getKnack')
-            ->atLeast()
-            ->once()
             ->andReturn($knack = $this->mockery(Knack::class));
         $knack->shouldReceive('getValue')
             ->andReturn(0);
         $exceptionalityProperties->shouldReceive('getWill')
-            ->once()
             ->andReturn($will = $this->mockery(Will::class));
         $will->shouldReceive('getValue')
             ->andReturn(0);
         $exceptionalityProperties->shouldReceive('getIntelligence')
-            ->once()
             ->andReturn($intelligence = $this->mockery(Intelligence::class));
         $intelligence->shouldReceive('getValue')
             ->andReturn(0);
         $exceptionalityProperties->shouldReceive('getCharisma')
-            ->once()
             ->andReturn($charisma = $this->mockery(Charisma::class));
         $charisma->shouldReceive('getValue')
             ->andReturn(0);
@@ -229,7 +222,6 @@ class PersonTest extends TestWithMockery
     {
         $experiences = $this->mockery(Experiences::class);
         $experiences->shouldReceive('getValue')
-            ->atLeast()->once()
             ->andReturn(0);
 
         return $experiences;
@@ -242,32 +234,43 @@ class PersonTest extends TestWithMockery
     {
         $professionLevels = $this->mockery(ProfessionLevels::class);
 
-        $professionLevels->shouldReceive('getFirstLevel')->atLeast()->once()->andReturn($firstLevel = $this->mockery(ProfessionLevel::class));
-        $firstLevel->shouldReceive('getProfession')->once()->andReturn($this->mockery(Profession::class));
+        $professionLevels->shouldReceive('getFirstLevel')
+            ->andReturn($firstLevel = $this->mockery(ProfessionLevel::class));
+        $firstLevel->shouldReceive('getProfession')->andReturn($profession = $this->mockery(Profession::class));
+        $profession->shouldReceive('getValue')
+            ->andReturn(ProfessionCodes::FIGHTER);
 
-        $professionLevels->shouldReceive('getStrengthModifierForFirstProfession')->atLeast()->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsStrengthModifier')->atLeast()->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelPropertyModifier')
+            ->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsPropertyModifier')
+            ->andReturn(0);
 
-        $professionLevels->shouldReceive('getAgilityModifierForFirstProfession')->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsAgilityModifier')->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelStrengthModifier')
+            ->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsStrengthModifier')
+            ->andReturn(0);
 
-        $professionLevels->shouldReceive('getKnackModifierForFirstProfession')->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsKnackModifier')->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelAgilityModifier')->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsAgilityModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getWillModifierForFirstProfession')->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsWillModifier')->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelKnackModifier')->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsKnackModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getIntelligenceModifierForFirstProfession')->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsIntelligenceModifier')->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelWillModifier')->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsWillModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getCharismaModifierForFirstProfession')->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsCharismaModifier')->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelIntelligenceModifier')->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsIntelligenceModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getWeightKgModifierForFirstLevel')->once()->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsWeightModifier')->once()->andReturn(0);
+        $professionLevels->shouldReceive('getFirstLevelCharismaModifier')->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsCharismaModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getHighestLevelRank')->once()->andReturn($highestLevelRank = $this->mockery(LevelRank::class));
-        $highestLevelRank->shouldReceive('getValue')->atLeast()->once()->andReturn(0);
+        $professionLevels->shouldReceive('getWeightKgModifierForFirstLevel')->andReturn(0);
+        $professionLevels->shouldReceive('getNextLevelsWeightModifier')->andReturn(0);
+
+        $professionLevels->shouldReceive('getHighestLevelRank')->andReturn($highestLevelRank = $this->mockery(LevelRank::class));
+        $highestLevelRank->shouldReceive('getValue')
+            ->andReturn(0);
 
         return $professionLevels;
     }
@@ -278,7 +281,7 @@ class PersonTest extends TestWithMockery
     private function createBackground()
     {
         $background = $this->mockery(Background::class);
-        $background->shouldReceive('getBackgroundSkills')
+        $background->shouldReceive('getBackgroundSkillPoints')
             ->andReturn($backgroundSkills = $this->mockery(BackgroundSkillPoints::class));
 
         return $background;
@@ -290,60 +293,22 @@ class PersonTest extends TestWithMockery
     private function createPersonSkills()
     {
         $skills = $this->mockery(PersonSkills::class);
-        $skills->shouldReceive('checkSkillPoints')
-            ->with(
-                \Mockery::type(ProfessionLevel::class),
-                \Mockery::type(BackgroundSkillPoints::class),
-                \Mockery::type(NextLevelsProperties::class)
-            )
-            ->atLeast()->once();
+        $skills->shouldReceive('checkSkillPoints');
 
         return $skills;
     }
 
     /**
+     * @param float $value
      * @return \Mockery\MockInterface|WeightInKg
      */
-    private function createWeightInKgAdjustment()
+    private function createWeightInKgAdjustment($value = 0.0)
     {
         $weightInKg = $this->mockery(WeightInKg::class);
+        $weightInKg->shouldReceive('getValue')
+            ->andReturn($value);
 
         return $weightInKg;
-    }
-
-    /**
-     * @return Tables
-     */
-    private function createTables()
-    {
-        $tables = $this->mockery(Tables::class);
-
-        $tables->shouldReceive('getWeightTable')
-            ->once()
-            ->andReturn($weightTable = $this->mockery(WeightTable::class));
-        $tables->shouldReceive('getWoundsTable')
-            ->atLeast()->once()
-            ->andReturn($fatigueTable = $this->mockery(WoundsTable::class));
-        $fatigueTable->shouldReceive('toWounds')
-            ->with(\Mockery::type('int'))
-            ->atLeast()->once()
-            ->andReturn(10);
-        $tables->shouldReceive('getFatigueTable')
-            ->atLeast()->once()
-            ->andReturn($fatigueTable = $this->mockery(FatigueTable::class));
-        $fatigueTable->shouldReceive('toFatigue')
-            ->with(\Mockery::type('int'))
-            ->atLeast()->once()
-            ->andReturn(10);
-        $tables->shouldReceive('getExperiencesTable')
-            ->atLeast()->once()
-            ->andReturn($experiencesTable = $this->mockery(ExperiencesTable::class));
-        $experiencesTable->shouldReceive('levelToTotalExperiences')
-            ->once()
-            ->with(0)
-            ->andReturn(0);
-
-        return $tables;
     }
 
     /**
