@@ -113,12 +113,6 @@ class Person extends StrictObject
         $this->professionLevels = $professionLevels;
         $this->background = $background;
         $this->weightInKgAdjustment = $weightInKgAdjustment;
-        $skills->checkSkillPoints(
-            $this->getProfessionLevels(),
-            $this->getBackground()->getBackgroundSkillPoints(),
-            $this->getPersonProperties($tables)->getNextLevelsProperties(),
-            $tables
-        );
         $this->personSkills = $skills;
     }
 

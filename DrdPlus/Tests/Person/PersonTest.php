@@ -34,7 +34,7 @@ class PersonTest extends TestWithMockery
     /**
      * @test
      */
-    public function can_create_instance()
+    public function I_can_create_it()
     {
         $instance = new Person(
             $this->createRace(),
@@ -293,7 +293,6 @@ class PersonTest extends TestWithMockery
     private function createPersonSkills()
     {
         $skills = $this->mockery(PersonSkills::class);
-        $skills->shouldReceive('checkSkillPoints');
 
         return $skills;
     }
