@@ -5,7 +5,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Attributes\Name;
-use DrdPlus\Tests\Tools\TestWithMockery;
+use Granam\Tests\Tools\TestWithMockery;
 
 class NameEnumTypeTest extends TestWithMockery
 {

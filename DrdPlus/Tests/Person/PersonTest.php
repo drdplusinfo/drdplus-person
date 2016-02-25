@@ -26,7 +26,7 @@ use DrdPlus\Properties\Base\Will;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
 use DrdPlus\Tables\Tables;
-use DrdPlus\Tests\Tools\TestWithMockery;
+use Granam\Tests\Tools\TestWithMockery;
 
 class PersonTest extends TestWithMockery
 {
