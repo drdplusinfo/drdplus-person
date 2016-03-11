@@ -15,6 +15,7 @@ use DrdPlus\Person\ProfessionLevels\LevelRank;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
+use DrdPlus\PersonProperties\PersonProperties;
 use DrdPlus\Professions\Profession;
 use DrdPlus\Properties\Base\Agility;
 use DrdPlus\Properties\Base\BaseProperty;
@@ -34,48 +35,7 @@ class PersonTest extends TestWithMockery
     /**
      * @test
      */
-    public function I_can_create_it()
-    {
-        $instance = new Person(
-            $this->createRace(),
-            $this->createGender(),
-            $this->createName(),
-            $this->createExceptionality(),
-            $this->createExperiences(),
-            $professionLevels = $this->createProfessionLevels(),
-            $this->createBackground(),
-            $this->createPersonSkills(),
-            $this->createWeightInKgAdjustment(),
-            new Tables()
-        );
-        self::assertNotNull($instance);
-        self::assertNull($instance->getId());
-    }
-
-    /**
-     * @test
-     */
-    public function returns_same_race_as_got()
-    {
-        $person = new Person(
-            $race = $this->createRace(),
-            $this->createGender(),
-            $this->createName(),
-            $this->createExceptionality(),
-            $this->createExperiences(),
-            $this->createProfessionLevels(),
-            $this->createBackground(),
-            $this->createPersonSkills(),
-            $this->createWeightInKgAdjustment(),
-            new Tables()
-        );
-        self::assertSame($race, $person->getRace());
-    }
-
-    /**
-     * @test
-     */
-    public function returns_same_items_as_got()
+    public function I_can_use_it()
     {
         $person = new Person(
             $race = $this->createRace(),
@@ -85,10 +45,13 @@ class PersonTest extends TestWithMockery
             $experiences = $this->createExperiences(),
             $professionLevels = $this->createProfessionLevels(),
             $background = $this->createBackground(),
-            $skills = $this->createPersonSkills(),
-            $weighInKgAdjustment = $this->createWeightInKgAdjustment(),
+            $personSkills = $this->createPersonSkills(),
+            $weightInKgAdjustment = $this->createWeightInKgAdjustment(),
             new Tables()
         );
+        self::assertNotNull($person);
+        self::assertNull($person->getId());
+
         self::assertSame($race, $person->getRace());
         self::assertSame($gender, $person->getGender());
         self::assertSame($name, $person->getName());
@@ -96,8 +59,13 @@ class PersonTest extends TestWithMockery
         self::assertSame($experiences, $person->getExperiences());
         self::assertSame($professionLevels, $person->getProfessionLevels());
         self::assertSame($background, $person->getBackground());
-        self::assertSame($skills, $person->getPersonSkills());
-        self::assertSame($skills, $person->getPersonSkills());
+        self::assertSame($personSkills, $person->getPersonSkills());
+        self::assertSame($weightInKgAdjustment, $person->getWeightInKgAdjustment());
+        self::assertInstanceOf(
+            PersonProperties::class,
+            $personProperties = $person->getPersonProperties(new Tables())
+        );
+        self::assertSame($personProperties, $personProperties = $person->getPersonProperties(new Tables()));
         // note: tables are for inner purpose only, does not have getter
     }
 
@@ -109,7 +77,7 @@ class PersonTest extends TestWithMockery
         $person = new Person(
             $this->createRace(),
             $this->createGender(),
-            $this->createName(),
+            $oldName = $this->createName(),
             $this->createExceptionality(),
             $this->createExperiences(),
             $this->createProfessionLevels(),
@@ -118,13 +86,14 @@ class PersonTest extends TestWithMockery
             $this->createWeightInKgAdjustment(),
             new Tables()
         );
+        self::assertSame($oldName, $person->getName());
         NameType::registerSelf();
-        $person->setName($name = Name::getEnum($nameString = 'foo'));
+        $name = Name::getEnum($nameString = 'foo');
+        self::assertNotSame($oldName, $name);
+        $person->setName($name);
         self::assertSame($name, $person->getName());
-        self::assertSame($nameString, (string)$person->getName());
         $person->setName($newName = Name::getEnum($newNameString = 'bar'));
         self::assertSame($newName, $person->getName());
-        self::assertSame($newNameString, (string)$person->getName());
     }
 
     /**
@@ -228,9 +197,10 @@ class PersonTest extends TestWithMockery
     }
 
     /**
+     * @param int $highestLevelRankValue = 1
      * @return ProfessionLevels
      */
-    private function createProfessionLevels()
+    private function createProfessionLevels($highestLevelRankValue = 1)
     {
         $professionLevels = $this->mockery(ProfessionLevels::class);
 
@@ -268,9 +238,10 @@ class PersonTest extends TestWithMockery
         $professionLevels->shouldReceive('getWeightKgModifierForFirstLevel')->andReturn(0);
         $professionLevels->shouldReceive('getNextLevelsWeightModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getHighestLevelRank')->andReturn($highestLevelRank = $this->mockery(LevelRank::class));
+        $professionLevels->shouldReceive('getHighestLevelRank')
+            ->andReturn($highestLevelRank = $this->mockery(LevelRank::class));
         $highestLevelRank->shouldReceive('getValue')
-            ->andReturn(0);
+            ->andReturn($highestLevelRankValue);
 
         return $professionLevels;
     }
@@ -315,4 +286,25 @@ class PersonTest extends TestWithMockery
     {
         return $this->mockery(Name::class);
     }
+
+    /**
+     * @test
+     * @expectedException \DrdPlus\Person\Exceptions\InsufficientExperiences
+     */
+    public function I_can_not_create_it_with_insufficient_experiences()
+    {
+        new Person(
+            $this->createRace(),
+            $this->createGender(),
+            $this->createName(),
+            $this->createExceptionality(),
+            $this->createExperiences(),
+            $professionLevels = $this->createProfessionLevels(2 /* highest level rank */),
+            $this->createBackground(),
+            $this->createPersonSkills(),
+            $this->createWeightInKgAdjustment(),
+            new Tables()
+        );
+    }
+
 }

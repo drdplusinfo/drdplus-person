@@ -122,13 +122,13 @@ class Person extends StrictObject
         ExperiencesTable $experiencesTable
     )
     {
-        $highestLevel = $professionLevels->getHighestLevelRank();
+        $highestLevelRank = $professionLevels->getHighestLevelRank();
         $requiredExperiences = $experiencesTable->toTotalExperiences(
-            new LevelBonus($highestLevel->getValue(), $experiencesTable)
+            new LevelBonus($highestLevelRank->getValue(), $experiencesTable)
         );
         if ($experiences->getValue() < $requiredExperiences->getValue()) {
-            throw new \LogicException(
-                "Given level {$highestLevel} needs at least {$requiredExperiences}, got only {$experiences}"
+            throw new Exceptions\InsufficientExperiences(
+                "Given level {$highestLevelRank} needs at least {$requiredExperiences} experiences, got only {$experiences}"
             );
         }
     }

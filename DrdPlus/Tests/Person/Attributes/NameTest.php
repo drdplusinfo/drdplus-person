@@ -9,9 +9,14 @@ class NameTest extends \PHPUnit_Framework_TestCase
      */
     public function I_can_create_it()
     {
-        $instance = Name::getEnum($value = 'foo');
-        self::assertInstanceOf(Name::class, $instance);
-        self::assertSame($value, $instance->getValue());
+        $name = Name::getIt($value = 'foo');
+        self::assertInstanceOf(Name::class, $name);
+        self::assertSame($name, Name::getEnum($value));
+        self::assertSame($value, $name->getValue());
+
+        $anotherName = Name::getIt($anotherValue = 'bar');
+        self::assertNotEquals($name, $anotherName); // different in value
+        self::assertSame($anotherValue, $anotherName->getValue());
     }
 
     /**
