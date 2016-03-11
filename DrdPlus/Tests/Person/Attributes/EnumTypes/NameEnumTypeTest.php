@@ -15,8 +15,8 @@ class NameEnumTypeTest extends TestWithMockery
      */
     public function I_can_get_expected_type_name()
     {
-        $this->assertSame('name', NameType::NAME);
-        $this->assertSame('name', NameType::getTypeName());
+        self::assertSame('name', NameType::NAME);
+        self::assertSame('name', NameType::getTypeName());
     }
 
     /**
@@ -25,7 +25,7 @@ class NameEnumTypeTest extends TestWithMockery
     public function I_can_registered_it()
     {
         NameType::registerSelf();
-        $this->assertTrue(Type::hasType(NameType::getTypeName()));
+        self::assertTrue(Type::hasType(NameType::getTypeName()));
     }
 
     /**
@@ -35,8 +35,8 @@ class NameEnumTypeTest extends TestWithMockery
     {
         $nameType = Type::getType(NameType::getTypeName());
         $phpValue = $nameType->convertToPHPValue($value = 'some string', $this->getPlatform());
-        $this->assertInstanceOf(Name::class, $phpValue);
-        $this->assertEquals($value, "$phpValue");
+        self::assertInstanceOf(Name::class, $phpValue);
+        self::assertEquals($value, "$phpValue");
     }
 
     /**

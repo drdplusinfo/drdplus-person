@@ -2,7 +2,7 @@
 namespace DrdPlus\Person\Attributes\Experiences\EnumTypes;
 
 use Doctrineum\Integer\IntegerEnumType;
-use DrdPlus\Person\Attributes\Experiences;
+use DrdPlus\Person\Attributes\Experiences\Experiences;
 
 class ExperiencesType extends IntegerEnumType
 {

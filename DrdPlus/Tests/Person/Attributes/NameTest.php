@@ -10,8 +10,8 @@ class NameTest extends \PHPUnit_Framework_TestCase
     public function I_can_create_it()
     {
         $instance = Name::getEnum($value = 'foo');
-        $this->assertInstanceOf(Name::class, $instance);
-        $this->assertSame($value, $instance->getValue());
+        self::assertInstanceOf(Name::class, $instance);
+        self::assertSame($value, $instance->getValue());
     }
 
     /**
@@ -20,8 +20,8 @@ class NameTest extends \PHPUnit_Framework_TestCase
     public function I_can_detect_if_is_empty()
     {
         $emptyName = Name::getEnum('');
-        $this->assertTrue($emptyName->isEmpty());
+        self::assertTrue($emptyName->isEmpty());
         $filledName = Name::getEnum('foo');
-        $this->assertFalse($filledName->isEmpty());
+        self::assertFalse($filledName->isEmpty());
     }
 }

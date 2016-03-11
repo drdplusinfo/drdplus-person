@@ -3,7 +3,7 @@ namespace DrdPlus\Person;
 
 use Doctrine\ORM\Mapping as ORM;
 use Drd\Genders\Gender;
-use DrdPlus\Person\Attributes\Experiences;
+use DrdPlus\Person\Attributes\Experiences\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
@@ -124,8 +124,7 @@ class Person extends StrictObject
     {
         $highestLevel = $professionLevels->getHighestLevelRank();
         $requiredExperiences = $experiencesTable->toTotalExperiences(
-            new LevelBonus($highestLevel->getValue(), $experiencesTable),
-            true /* is main profession */
+            new LevelBonus($highestLevel->getValue(), $experiencesTable)
         );
         if ($experiences->getValue() < $requiredExperiences->getValue()) {
             throw new \LogicException(

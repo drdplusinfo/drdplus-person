@@ -5,9 +5,9 @@ use Drd\Genders\Gender;
 use DrdPlus\Codes\ProfessionCodes;
 use DrdPlus\Codes\RaceCodes;
 use DrdPlus\Exceptionalities\Exceptionality;
-use DrdPlus\Exceptionalities\ExceptionalityProperties;
+use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
-use DrdPlus\Person\Attributes\Experiences;
+use DrdPlus\Person\Attributes\Experiences\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\Background\BackgroundSkillPoints;
@@ -48,8 +48,8 @@ class PersonTest extends TestWithMockery
             $this->createWeightInKgAdjustment(),
             new Tables()
         );
-        $this->assertNotNull($instance);
-        $this->assertNull($instance->getId());
+        self::assertNotNull($instance);
+        self::assertNull($instance->getId());
     }
 
     /**
@@ -69,7 +69,7 @@ class PersonTest extends TestWithMockery
             $this->createWeightInKgAdjustment(),
             new Tables()
         );
-        $this->assertSame($race, $person->getRace());
+        self::assertSame($race, $person->getRace());
     }
 
     /**
@@ -89,15 +89,15 @@ class PersonTest extends TestWithMockery
             $weighInKgAdjustment = $this->createWeightInKgAdjustment(),
             new Tables()
         );
-        $this->assertSame($race, $person->getRace());
-        $this->assertSame($gender, $person->getGender());
-        $this->assertSame($name, $person->getName());
-        $this->assertSame($exceptionality, $person->getExceptionality());
-        $this->assertSame($experiences, $person->getExperiences());
-        $this->assertSame($professionLevels, $person->getProfessionLevels());
-        $this->assertSame($background, $person->getBackground());
-        $this->assertSame($skills, $person->getPersonSkills());
-        $this->assertSame($skills, $person->getPersonSkills());
+        self::assertSame($race, $person->getRace());
+        self::assertSame($gender, $person->getGender());
+        self::assertSame($name, $person->getName());
+        self::assertSame($exceptionality, $person->getExceptionality());
+        self::assertSame($experiences, $person->getExperiences());
+        self::assertSame($professionLevels, $person->getProfessionLevels());
+        self::assertSame($background, $person->getBackground());
+        self::assertSame($skills, $person->getPersonSkills());
+        self::assertSame($skills, $person->getPersonSkills());
         // note: tables are for inner purpose only, does not have getter
     }
 
@@ -120,11 +120,11 @@ class PersonTest extends TestWithMockery
         );
         NameType::registerSelf();
         $person->setName($name = Name::getEnum($nameString = 'foo'));
-        $this->assertSame($name, $person->getName());
-        $this->assertSame($nameString, (string)$person->getName());
+        self::assertSame($name, $person->getName());
+        self::assertSame($nameString, (string)$person->getName());
         $person->setName($newName = Name::getEnum($newNameString = 'bar'));
-        $this->assertSame($newName, $person->getName());
-        $this->assertSame($newNameString, (string)$person->getName());
+        self::assertSame($newName, $person->getName());
+        self::assertSame($newNameString, (string)$person->getName());
     }
 
     /**
@@ -292,9 +292,7 @@ class PersonTest extends TestWithMockery
      */
     private function createPersonSkills()
     {
-        $skills = $this->mockery(PersonSkills::class);
-
-        return $skills;
+        return $this->mockery(PersonSkills::class);
     }
 
     /**

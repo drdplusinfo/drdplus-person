@@ -1,5 +1,5 @@
 <?php
-namespace DrdPlus\Person\Attributes;
+namespace DrdPlus\Person\Attributes\Experiences;
 
 use Doctrineum\Integer\IntegerEnum;
 
