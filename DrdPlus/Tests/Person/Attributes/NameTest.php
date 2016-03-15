@@ -1,5 +1,7 @@
 <?php
-namespace DrdPlus\Person\Attributes;
+namespace DrdPlus\Tests\Person\Attributes;
+
+use DrdPlus\Person\Attributes\Name;
 
 class NameTest extends \PHPUnit_Framework_TestCase
 {

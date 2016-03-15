@@ -44,6 +44,6 @@ class NameEnumTypeTest extends TestWithMockery
      */
     private function getPlatform()
     {
-        return \Mockery::mock(AbstractPlatform::class);
+        return $this->mockery(AbstractPlatform::class);
     }
 }

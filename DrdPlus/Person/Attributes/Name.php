@@ -24,6 +24,6 @@ class Name extends ScalarEnum
      */
     public function isEmpty()
     {
-        return strlen($this->getValue()) === 0;
+        return $this->getValue() === '';
     }
 }

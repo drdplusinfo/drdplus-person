@@ -1,8 +1,8 @@
 <?php
-namespace DrdPlus\Person\Attributes\Experiences\EnumTypes;
+namespace DrdPlus\Person\Attributes\EnumTypes;
 
 use Doctrineum\Integer\IntegerEnumType;
-use DrdPlus\Person\Attributes\Experiences\Experiences;
+use DrdPlus\Person\Attributes\Experiences;
 
 class ExperiencesType extends IntegerEnumType
 {

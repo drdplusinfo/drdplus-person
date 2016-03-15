@@ -1,5 +1,5 @@
 <?php
-namespace DrdPlus\Person;
+namespace DrdPlus\Tests\Person;
 
 use Drd\Genders\Gender;
 use DrdPlus\Codes\ProfessionCodes;
@@ -7,10 +7,11 @@ use DrdPlus\Codes\RaceCodes;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
-use DrdPlus\Person\Attributes\Experiences\Experiences;
+use DrdPlus\Person\Attributes\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\Background\BackgroundSkillPoints;
+use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\LevelRank;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;

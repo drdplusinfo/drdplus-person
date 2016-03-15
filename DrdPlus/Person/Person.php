@@ -3,7 +3,7 @@ namespace DrdPlus\Person;
 
 use Doctrine\ORM\Mapping as ORM;
 use Drd\Genders\Gender;
-use DrdPlus\Person\Attributes\Experiences\Experiences;
+use DrdPlus\Person\Attributes\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
