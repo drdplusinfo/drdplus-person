@@ -25,6 +25,7 @@ use DrdPlus\Properties\Base\Intelligence;
 use DrdPlus\Properties\Base\Knack;
 use DrdPlus\Properties\Base\Strength;
 use DrdPlus\Properties\Base\Will;
+use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
 use DrdPlus\Tables\Tables;
@@ -48,6 +49,7 @@ class PersonTest extends TestWithMockery
             $background = $this->createBackground(),
             $personSkills = $this->createPersonSkills(),
             $weightInKgAdjustment = $this->createWeightInKgAdjustment(),
+            $heightInCm = $this->createHeightInCm(),
             new Tables()
         );
         self::assertNotNull($person);
@@ -69,6 +71,7 @@ class PersonTest extends TestWithMockery
         self::assertSame($personProperties, $personProperties = $person->getPersonProperties(new Tables()));
         // note: tables are for inner purpose only, does not have getter
         self::assertSame($professionLevels->getFirstLevel()->getProfession(), $person->getProfession());
+        self::assertSame($heightInCm, $personProperties->getHeightInCm());
     }
 
     /**
@@ -86,6 +89,7 @@ class PersonTest extends TestWithMockery
             $this->createBackground(),
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
+            $this->createHeightInCm(),
             new Tables()
         );
         self::assertSame($oldName, $person->getName());
@@ -283,6 +287,19 @@ class PersonTest extends TestWithMockery
     }
 
     /**
+     * @param float $value
+     * @return \Mockery\MockInterface|HeightInCm
+     */
+    private function createHeightInCm($value = 180.0)
+    {
+        $heightInCm = $this->mockery(HeightInCm::class);
+        $heightInCm->shouldReceive('getValue')
+            ->andReturn($value);
+
+        return $heightInCm;
+    }
+
+    /**
      * @return Name
      */
     private function createName()
@@ -306,6 +323,7 @@ class PersonTest extends TestWithMockery
             $this->createBackground(),
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
+            $this->createHeightInCm(),
             new Tables()
         );
     }

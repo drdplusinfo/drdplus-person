@@ -10,6 +10,7 @@ use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
 use DrdPlus\PersonProperties\PersonProperties;
+use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
 use DrdPlus\Tables\Measurements\Experiences\ExperiencesTable;
@@ -91,6 +92,12 @@ class Person extends StrictObject
      */
     private $weightInKgAdjustment;
 
+    /**
+     * @var HeightInCm
+     * @ORM\Column(type="height_in_cm")
+     */
+    private $heightInCm;
+
     public function __construct(
         Race $race, // enum
         Gender $gender, // enum
@@ -101,6 +108,7 @@ class Person extends StrictObject
         Background $background, // entity
         PersonSkills $personSkills, // entity
         WeightInKg $weightInKgAdjustment, // value
+        HeightInCm $heightInCm, // value
         Tables $tables // data helper
     )
     {
@@ -113,6 +121,7 @@ class Person extends StrictObject
         $this->professionLevels = $professionLevels;
         $this->background = $background;
         $this->weightInKgAdjustment = $weightInKgAdjustment;
+        $this->heightInCm = $heightInCm;
         $this->personSkills = $personSkills;
     }
 
@@ -234,6 +243,7 @@ class Person extends StrictObject
                 $this->getExceptionality()->getExceptionalityProperties(),
                 $this->getProfessionLevels(),
                 $this->getWeightInKgAdjustment(),
+                $this->heightInCm,
                 $tables
             );
         }
