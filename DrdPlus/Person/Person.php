@@ -99,7 +99,7 @@ class Person extends StrictObject
         Experiences $experiences, // enum
         ProfessionLevels $professionLevels, // entity
         Background $background, // entity
-        PersonSkills $skills, // entity
+        PersonSkills $personSkills, // entity
         WeightInKg $weightInKgAdjustment, // value
         Tables $tables // data helper
     )
@@ -113,7 +113,7 @@ class Person extends StrictObject
         $this->professionLevels = $professionLevels;
         $this->background = $background;
         $this->weightInKgAdjustment = $weightInKgAdjustment;
-        $this->personSkills = $skills;
+        $this->personSkills = $personSkills;
     }
 
     private function checkLevelsAgainstExperiences(
@@ -247,6 +247,14 @@ class Person extends StrictObject
     public function getWeightInKgAdjustment()
     {
         return $this->weightInKgAdjustment;
+    }
+
+    /**
+     * @return \DrdPlus\Professions\Profession
+     */
+    public function getProfession()
+    {
+        return $this->getProfessionLevels()->getFirstLevel()->getProfession();
     }
 
 }

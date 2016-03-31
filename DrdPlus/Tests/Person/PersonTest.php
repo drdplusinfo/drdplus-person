@@ -68,6 +68,7 @@ class PersonTest extends TestWithMockery
         );
         self::assertSame($personProperties, $personProperties = $person->getPersonProperties(new Tables()));
         // note: tables are for inner purpose only, does not have getter
+        self::assertSame($professionLevels->getFirstLevel()->getProfession(), $person->getProfession());
     }
 
     /**
@@ -199,9 +200,10 @@ class PersonTest extends TestWithMockery
 
     /**
      * @param int $highestLevelRankValue = 1
+     * @param string $professionCode
      * @return ProfessionLevels
      */
-    private function createProfessionLevels($highestLevelRankValue = 1)
+    private function createProfessionLevels($highestLevelRankValue = 1, $professionCode = ProfessionCodes::FIGHTER)
     {
         $professionLevels = $this->mockery(ProfessionLevels::class);
 
@@ -209,7 +211,7 @@ class PersonTest extends TestWithMockery
             ->andReturn($firstLevel = $this->mockery(ProfessionLevel::class));
         $firstLevel->shouldReceive('getProfession')->andReturn($profession = $this->mockery(Profession::class));
         $profession->shouldReceive('getValue')
-            ->andReturn(ProfessionCodes::FIGHTER);
+            ->andReturn($professionCode);
 
         $professionLevels->shouldReceive('getFirstLevelPropertyModifier')
             ->andReturn(0);
