@@ -253,7 +253,9 @@ class PersonTest extends TestWithMockery
         $professionLevels->shouldReceive('getWeightKgModifierForFirstLevel')->andReturn(0);
         $professionLevels->shouldReceive('getNextLevelsWeightModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getHighestLevelRank')
+        $professionLevels->shouldReceive('getCurrentLevel')
+            ->andReturn($currentLevel = $this->mockery(ProfessionLevel::class));
+        $currentLevel->shouldReceive('getLevelRank')
             ->andReturn($highestLevelRank = $this->mockery(LevelRank::class));
         $highestLevelRank->shouldReceive('getValue')
             ->andReturn($highestLevelRankValue);

@@ -140,7 +140,7 @@ class Person extends StrictObject
         ExperiencesTable $experiencesTable
     )
     {
-        $highestLevelRank = $professionLevels->getHighestLevelRank();
+        $highestLevelRank = $professionLevels->getCurrentLevel()->getLevelRank();
         $requiredExperiences = $experiencesTable->toTotalExperiences(
             new LevelBonus($highestLevelRank->getValue(), $experiencesTable)
         );
