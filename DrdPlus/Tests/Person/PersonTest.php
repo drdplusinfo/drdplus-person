@@ -25,6 +25,7 @@ use DrdPlus\Properties\Base\Intelligence;
 use DrdPlus\Properties\Base\Knack;
 use DrdPlus\Properties\Base\Strength;
 use DrdPlus\Properties\Base\Will;
+use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
@@ -50,6 +51,7 @@ class PersonTest extends TestWithMockery
             $personSkills = $this->createPersonSkills(),
             $weightInKgAdjustment = $this->createWeightInKgAdjustment(),
             $heightInCm = $this->createHeightInCm(),
+            $age = $this->createAge(),
             new Tables()
         );
         self::assertNotNull($person);
@@ -63,15 +65,20 @@ class PersonTest extends TestWithMockery
         self::assertSame($professionLevels, $person->getProfessionLevels());
         self::assertSame($background, $person->getBackground());
         self::assertSame($personSkills, $person->getPersonSkills());
-        self::assertSame($weightInKgAdjustment, $person->getWeightInKgAdjustment());
         self::assertInstanceOf(
             PersonProperties::class,
             $personProperties = $person->getPersonProperties(new Tables())
         );
-        self::assertSame($personProperties, $personProperties = $person->getPersonProperties(new Tables()));
+        self::assertSame(
+            $personProperties,
+            $personProperties = $person->getPersonProperties(new Tables()),
+            'Same instance of person properties expected'
+        );
         // note: tables are for inner purpose only, does not have getter
+        self::assertSame($weightInKgAdjustment, $personProperties->getWeightInKgAdjustment());
         self::assertSame($professionLevels->getFirstLevel()->getProfession(), $person->getProfession());
         self::assertSame($heightInCm, $personProperties->getHeightInCm());
+        self::assertSame($age, $personProperties->getAge());
     }
 
     /**
@@ -90,6 +97,7 @@ class PersonTest extends TestWithMockery
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
             $this->createHeightInCm(),
+            $this->createAge(),
             new Tables()
         );
         self::assertSame($oldName, $person->getName());
@@ -300,11 +308,19 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @return Name
+     * @return \Mockery\MockInterface|Name
      */
     private function createName()
     {
         return $this->mockery(Name::class);
+    }
+
+    /**
+     * @return \Mockery\MockInterface|Age
+     */
+    private function createAge()
+    {
+        return $this->mockery(Age::class);
     }
 
     /**
@@ -324,6 +340,7 @@ class PersonTest extends TestWithMockery
             $this->createPersonSkills(),
             $this->createWeightInKgAdjustment(),
             $this->createHeightInCm(),
+            $this->createAge(),
             new Tables()
         );
     }

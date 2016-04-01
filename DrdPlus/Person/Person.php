@@ -10,6 +10,7 @@ use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
 use DrdPlus\PersonProperties\PersonProperties;
+use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
@@ -98,6 +99,12 @@ class Person extends StrictObject
      */
     private $heightInCm;
 
+    /**
+     * @var Age
+     * @ORM\Column(type="age")
+     */
+    private $age;
+
     public function __construct(
         Race $race, // enum
         Gender $gender, // enum
@@ -109,6 +116,7 @@ class Person extends StrictObject
         PersonSkills $personSkills, // entity
         WeightInKg $weightInKgAdjustment, // value
         HeightInCm $heightInCm, // value
+        Age $age, // value
         Tables $tables // data helper
     )
     {
@@ -122,6 +130,7 @@ class Person extends StrictObject
         $this->background = $background;
         $this->weightInKgAdjustment = $weightInKgAdjustment;
         $this->heightInCm = $heightInCm;
+        $this->age = $age;
         $this->personSkills = $personSkills;
     }
 
@@ -236,27 +245,20 @@ class Person extends StrictObject
      */
     public function getPersonProperties(Tables $tables)
     {
-        if (!isset($this->personProperties)) {
+        if ($this->personProperties === null) {
             $this->personProperties = new PersonProperties( // enums aggregate
                 $this->getRace(),
                 $this->getGender(),
                 $this->getExceptionality()->getExceptionalityProperties(),
                 $this->getProfessionLevels(),
-                $this->getWeightInKgAdjustment(),
+                $this->weightInKgAdjustment,
                 $this->heightInCm,
+                $this->age,
                 $tables
             );
         }
 
         return $this->personProperties;
-    }
-
-    /**
-     * @return WeightInKg
-     */
-    public function getWeightInKgAdjustment()
-    {
-        return $this->weightInKgAdjustment;
     }
 
     /**
