@@ -7,7 +7,6 @@ use DrdPlus\Codes\RaceCodes;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
-use DrdPlus\Person\Attributes\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\Background\BackgroundParts\BackgroundSkillPoints;
@@ -30,6 +29,7 @@ use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
+use DrdPlus\Tables\Measurements\Experiences\Experiences;
 use DrdPlus\Tables\Tables;
 use Granam\Tests\Tools\TestWithMockery;
 
