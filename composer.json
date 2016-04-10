@@ -10,7 +10,7 @@
   },
   "require": {
     "php": ">=5.5.0",
-    "doctrine/annotations": "~1.2",
+    "doctrine/orm": "*",
     "granam/strict-object": "dev-master",
     "drd/genders": "dev-master",
     "drd-plus/exceptionalities": "dev-master",
@@ -18,7 +18,9 @@
     "drd-plus/properties": "dev-master",
     "drd-plus/races": "dev-master",
     "drd-plus/tables": "dev-master",
-    "drd-plus/person-skills": "dev-master"
+    "drd-plus/person-skills": "dev-master",
+    "drd-plus/person-gaming-session": "dev-master",
+    "doctrineum/entity": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.4",

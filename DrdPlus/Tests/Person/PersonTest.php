@@ -11,6 +11,7 @@ use DrdPlus\Person\Attributes\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\Background\BackgroundParts\BackgroundSkillPoints;
+use DrdPlus\Person\GamingSession\Memories;
 use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\LevelRank;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
@@ -45,7 +46,7 @@ class PersonTest extends TestWithMockery
             $gender = $this->createGender(),
             $name = $this->createName(),
             $exceptionality = $this->createExceptionality(),
-            $experiences = $this->createExperiences(),
+            $memories = $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(),
             $background = $this->createBackground(),
             $personSkills = $this->createPersonSkills(),
@@ -61,7 +62,7 @@ class PersonTest extends TestWithMockery
         self::assertSame($gender, $person->getGender());
         self::assertSame($name, $person->getName());
         self::assertSame($exceptionality, $person->getExceptionality());
-        self::assertSame($experiences, $person->getExperiences());
+        self::assertSame($memories, $person->getMemories());
         self::assertSame($professionLevels, $person->getProfessionLevels());
         self::assertSame($background, $person->getBackground());
         self::assertSame($personSkills, $person->getPersonSkills());
@@ -91,7 +92,7 @@ class PersonTest extends TestWithMockery
             $this->createGender(),
             $oldName = $this->createName(),
             $this->createExceptionality(),
-            $this->createExperiences(),
+            $this->createMemories(),
             $this->createProfessionLevels(),
             $this->createBackground(),
             $this->createPersonSkills(),
@@ -199,15 +200,17 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @return Experiences
+     * @return Memories
      */
-    private function createExperiences()
+    private function createMemories()
     {
-        $experiences = $this->mockery(Experiences::class);
+        $memories = $this->mockery(Memories::class);
+        $memories->shouldReceive('getExperiences')
+            ->andReturn($experiences = $this->mockery(Experiences::class));
         $experiences->shouldReceive('getValue')
             ->andReturn(0);
 
-        return $experiences;
+        return $memories;
     }
 
     /**
@@ -336,7 +339,7 @@ class PersonTest extends TestWithMockery
             $this->createGender(),
             $this->createName(),
             $this->createExceptionality(),
-            $this->createExperiences(),
+            $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(2 /* highest level rank */),
             $this->createBackground(),
             $this->createPersonSkills(),

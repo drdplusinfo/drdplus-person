@@ -2,11 +2,12 @@
 namespace DrdPlus\Person;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrineum\Entity\Entity;
 use Drd\Genders\Gender;
-use DrdPlus\Person\Attributes\Experiences;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
+use DrdPlus\Person\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
 use DrdPlus\PersonProperties\PersonProperties;
@@ -23,7 +24,7 @@ use Granam\Strict\Object\StrictObject;
  * @ORM\Table()
  * @ORM\Entity()
  */
-class Person extends StrictObject
+class Person extends StrictObject implements Entity
 {
     /**
      * @var integer
@@ -32,85 +33,88 @@ class Person extends StrictObject
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
     /**
      * @var Name
      * @ORM\Column(type="name")
      */
     private $name;
-
     /**
      * @var Race
      * @ORM\Column(type="race")
      */
     private $race;
-
     /**
      * @var Gender
      * @ORM\Column(type="gender")
      */
     private $gender;
-
     /**
      * @var Exceptionality
      * @ORM\OneToOne(targetEntity="DrdPlus\Exceptionalities\Exceptionality")
      */
     private $exceptionality;
-
     /**
      * @var PersonProperties
      * @ORM\OneToOne(targetEntity="DrdPlus\PersonProperties\PersonProperties")
      */
     private $personProperties;
-
     /**
      * @var ProfessionLevels
      * @ORM\OneToOne(targetEntity="DrdPlus\ProfessionLevels\ProfessionLevels")
      */
     private $professionLevels;
-
     /**
-     * @var Experiences
-     * @ORM\Column(type="experiences")
+     * @var Memories
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Person\GamingSession\Memories")
      */
-    private $experiences;
-
+    private $memories;
     /**
      * @var Background
      * @ORM\OneToOne(targetEntity="DrdPlus\Person\Background\Background")
      */
     private $background;
-
     /**
      * @var PersonSkills
      * @ORM\OneToOne(targetEntity="DrdPlus\Person\Skills\PersonSkills")
      */
     private $personSkills;
-
     /**
      * @var WeightInKg
      * @ORM\Column(type="weight_in_kg")
      */
     private $weightInKgAdjustment;
-
     /**
      * @var HeightInCm
      * @ORM\Column(type="height_in_cm")
      */
     private $heightInCm;
-
     /**
      * @var Age
      * @ORM\Column(type="age")
      */
     private $age;
 
+    /**
+     * Person constructor.
+     * @param Race $race
+     * @param Gender $gender
+     * @param Name $name
+     * @param Exceptionality $exceptionality
+     * @param Memories $memories
+     * @param ProfessionLevels $professionLevels
+     * @param Background $background
+     * @param PersonSkills $personSkills
+     * @param WeightInKg $weightInKgAdjustment
+     * @param HeightInCm $heightInCm
+     * @param Age $age
+     * @param Tables $tables
+     */
     public function __construct(
         Race $race, // enum
         Gender $gender, // enum
         Name $name, // enum
         Exceptionality $exceptionality, // entity
-        Experiences $experiences, // enum
+        Memories $memories, // entity
         ProfessionLevels $professionLevels, // entity
         Background $background, // entity
         PersonSkills $personSkills, // entity
@@ -124,8 +128,12 @@ class Person extends StrictObject
         $this->gender = $gender;
         $this->name = $name;
         $this->exceptionality = $exceptionality;
-        $this->checkLevelsAgainstExperiences($professionLevels, $experiences, $tables->getExperiencesTable());
-        $this->experiences = $experiences;
+        $this->checkLevelsAgainstExperiences(
+            $professionLevels,
+            $memories,
+            $tables->getExperiencesTable()
+        );
+        $this->memories = $memories;
         $this->professionLevels = $professionLevels;
         $this->background = $background;
         $this->weightInKgAdjustment = $weightInKgAdjustment;
@@ -136,7 +144,7 @@ class Person extends StrictObject
 
     private function checkLevelsAgainstExperiences(
         ProfessionLevels $professionLevels,
-        Experiences $experiences,
+        Memories $memories,
         ExperiencesTable $experiencesTable
     )
     {
@@ -144,9 +152,10 @@ class Person extends StrictObject
         $requiredExperiences = $experiencesTable->toTotalExperiences(
             new LevelBonus($highestLevelRank->getValue(), $experiencesTable)
         );
-        if ($experiences->getValue() < $requiredExperiences->getValue()) {
+        $availableExperiences = $memories->getExperiences($experiencesTable);
+        if ($availableExperiences->getValue() < $requiredExperiences->getValue()) {
             throw new Exceptions\InsufficientExperiences(
-                "Given level {$highestLevelRank} needs at least {$requiredExperiences} experiences, got only {$experiences}"
+                "Given level {$highestLevelRank} needs at least {$requiredExperiences} experiences, got only {$availableExperiences}"
             );
         }
     }
@@ -206,11 +215,11 @@ class Person extends StrictObject
     }
 
     /**
-     * @return Experiences
+     * @return Memories
      */
-    public function getExperiences()
+    public function getMemories()
     {
-        return $this->experiences;
+        return $this->memories;
     }
 
     /**
