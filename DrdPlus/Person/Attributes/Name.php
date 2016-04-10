@@ -1,6 +1,7 @@
 <?php
 namespace DrdPlus\Person\Attributes;
 use Doctrineum\Scalar\ScalarEnum;
+use Granam\Scalar\Tools\ToString;
 
 /**
  * @method static Name getEnum(string $name)
@@ -17,6 +18,11 @@ class Name extends ScalarEnum
     public static function getIt($name)
     {
         return static::getEnum($name);
+    }
+
+    protected static function convertToEnumFinalValue($enumValue)
+    {
+        return ToString::toString($enumValue);
     }
 
     /**
