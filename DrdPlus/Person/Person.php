@@ -21,7 +21,6 @@ use DrdPlus\Tables\Tables;
 use Granam\Strict\Object\StrictObject;
 
 /**
- * @ORM\Table()
  * @ORM\Entity()
  */
 class Person extends StrictObject implements Entity
@@ -50,32 +49,32 @@ class Person extends StrictObject implements Entity
     private $gender;
     /**
      * @var Exceptionality
-     * @ORM\OneToOne(targetEntity="DrdPlus\Exceptionalities\Exceptionality")
+     * @ORM\OneToOne(targetEntity="DrdPlus\Exceptionalities\Exceptionality", cascade={"persist"})
      */
     private $exceptionality;
     /**
      * @var PersonProperties
-     * @ORM\OneToOne(targetEntity="DrdPlus\PersonProperties\PersonProperties")
+     * Does not need Doctrine annotation - it is just an on-demand built container
      */
     private $personProperties;
     /**
      * @var ProfessionLevels
-     * @ORM\OneToOne(targetEntity="DrdPlus\ProfessionLevels\ProfessionLevels")
+     * @ORM\OneToOne(targetEntity="DrdPlus\Person\ProfessionLevels\ProfessionLevels", cascade={"persist"})
      */
     private $professionLevels;
     /**
      * @var Memories
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Person\GamingSession\Memories")
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Person\GamingSession\Memories", cascade={"persist"})
      */
     private $memories;
     /**
      * @var Background
-     * @ORM\OneToOne(targetEntity="DrdPlus\Person\Background\Background")
+     * @ORM\OneToOne(targetEntity="DrdPlus\Person\Background\Background", cascade={"persist"})
      */
     private $background;
     /**
      * @var PersonSkills
-     * @ORM\OneToOne(targetEntity="DrdPlus\Person\Skills\PersonSkills")
+     * @ORM\OneToOne(targetEntity="DrdPlus\Person\Skills\PersonSkills", cascade={"persist"})
      */
     private $personSkills;
     /**
