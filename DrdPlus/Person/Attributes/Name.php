@@ -7,7 +7,6 @@ use Doctrineum\String\StringEnum;
  */
 class Name extends StringEnum
 {
-    const NAME = 'name';
 
     /**
      * @param string $name
