@@ -7,10 +7,10 @@ use Drd\Genders\Gender;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
-use DrdPlus\Person\GamingSession\Memories;
+use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
-use DrdPlus\PersonProperties\PersonProperties;
+use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
@@ -53,10 +53,10 @@ class Person extends StrictObject implements Entity
      */
     private $exceptionality;
     /**
-     * @var PersonProperties
+     * @var PropertiesByLevels
      * Does not need Doctrine annotation - it is just an on-demand built container
      */
-    private $personProperties;
+    private $propertiesByLevels;
     /**
      * @var ProfessionLevels
      * @ORM\OneToOne(targetEntity="DrdPlus\Person\ProfessionLevels\ProfessionLevels", cascade={"persist"})
@@ -64,7 +64,7 @@ class Person extends StrictObject implements Entity
     private $professionLevels;
     /**
      * @var Memories
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Person\GamingSession\Memories", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\DrdPlus\GamingSession\Memories", cascade={"persist"})
      */
     private $memories;
     /**
@@ -249,12 +249,12 @@ class Person extends StrictObject implements Entity
      * Those are lazy loaded and re-calculated on every entity reload if those requested
      *
      * @param Tables $tables
-     * @return PersonProperties
+     * @return PropertiesByLevels
      */
-    public function getPersonProperties(Tables $tables)
+    public function getProperties(Tables $tables)
     {
-        if ($this->personProperties === null) {
-            $this->personProperties = new PersonProperties( // enums aggregate
+        if ($this->propertiesByLevels === null) {
+            $this->propertiesByLevels = new PropertiesByLevels( // enums aggregate
                 $this->getRace(),
                 $this->getGender(),
                 $this->getExceptionality()->getExceptionalityProperties(),
@@ -266,7 +266,7 @@ class Person extends StrictObject implements Entity
             );
         }
 
-        return $this->personProperties;
+        return $this->propertiesByLevels;
     }
 
     /**

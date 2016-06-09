@@ -10,13 +10,12 @@ use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\Background\BackgroundParts\BackgroundSkillPoints;
-use DrdPlus\Person\GamingSession\Memories;
+use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\LevelRank;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
-use DrdPlus\PersonProperties\PersonProperties;
 use DrdPlus\Professions\Profession;
 use DrdPlus\Properties\Base\Agility;
 use DrdPlus\Properties\Base\BaseProperty;
@@ -28,6 +27,7 @@ use DrdPlus\Properties\Base\Will;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
+use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Races\Race;
 use DrdPlus\Tables\Measurements\Experiences\Experiences;
 use DrdPlus\Tables\Tables;
@@ -67,19 +67,19 @@ class PersonTest extends TestWithMockery
         self::assertSame($background, $person->getBackground());
         self::assertSame($personSkills, $person->getPersonSkills());
         self::assertInstanceOf(
-            PersonProperties::class,
-            $personProperties = $person->getPersonProperties(new Tables())
+            PropertiesByLevels::class,
+            $propertiesByLevels = $person->getProperties(new Tables())
         );
         self::assertSame(
-            $personProperties,
-            $personProperties = $person->getPersonProperties(new Tables()),
+            $propertiesByLevels,
+            $propertiesByLevels = $person->getProperties(new Tables()),
             'Same instance of person properties expected'
         );
         // note: tables are for inner purpose only, does not have getter
-        self::assertSame($weightInKgAdjustment, $personProperties->getWeightInKgAdjustment());
+        self::assertSame($weightInKgAdjustment, $propertiesByLevels->getWeightInKgAdjustment());
         self::assertSame($professionLevels->getFirstLevel()->getProfession(), $person->getProfession());
-        self::assertSame($heightInCm, $personProperties->getHeightInCm());
-        self::assertSame($age, $personProperties->getAge());
+        self::assertSame($heightInCm, $propertiesByLevels->getHeightInCm());
+        self::assertSame($age, $propertiesByLevels->getAge());
     }
 
     /**

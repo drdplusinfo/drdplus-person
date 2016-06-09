@@ -3,9 +3,9 @@ namespace DrdPlus\Person\EnumTypes;
 
 use Drd\Genders\EnumTypes\GendersEnumRegistrar;
 use DrdPlus\Exceptionalities\EnumTypes\ExceptionalitiesEnumRegistrar;
+use DrdPlus\GamingSession\EnumTypes\GamingSessionEnumRegistrar;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Background\EnumTypes\PersonBackgroundEnumRegistrar;
-use DrdPlus\Person\GamingSession\EnumTypes\GamingSessionEnumRegistrar;
 use DrdPlus\Person\ProfessionLevels\EnumTypes\ProfessionLevelsEnumRegistrar;
 use DrdPlus\Professions\EnumTypes\ProfessionsEnumRegistrar;
 use DrdPlus\Properties\EnumTypes\PropertiesEnumRegistrar;
