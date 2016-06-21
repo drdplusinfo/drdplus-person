@@ -2,8 +2,8 @@
 namespace DrdPlus\Tests\Person;
 
 use Drd\Genders\Gender;
-use DrdPlus\Codes\ProfessionCodes;
-use DrdPlus\Codes\RaceCodes;
+use DrdPlus\Codes\ProfessionCode;
+use DrdPlus\Codes\RaceCode;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
@@ -142,9 +142,9 @@ class PersonTest extends TestWithMockery
         $race->shouldReceive('getSize')
             ->andReturn(0);
         $race->shouldReceive('getRaceCode')
-            ->andReturn(RaceCodes::HUMAN);
+            ->andReturn(RaceCode::HUMAN);
         $race->shouldReceive('getSubraceCode')
-            ->andReturn(RaceCodes::COMMON);
+            ->andReturn(RaceCode::COMMON);
         $race->shouldReceive('getSenses')
             ->andReturn(0);
 
@@ -218,7 +218,7 @@ class PersonTest extends TestWithMockery
      * @param string $professionCode
      * @return ProfessionLevels
      */
-    private function createProfessionLevels($highestLevelRankValue = 1, $professionCode = ProfessionCodes::FIGHTER)
+    private function createProfessionLevels($highestLevelRankValue = 1, $professionCode = ProfessionCode::FIGHTER)
     {
         $professionLevels = $this->mockery(ProfessionLevels::class);
 

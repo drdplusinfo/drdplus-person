@@ -33,7 +33,7 @@ use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Humans\CommonHuman;
 use DrdPlus\Tables\Tables;
 
-class DoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
+class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
     protected function setUp()
     {

@@ -3,7 +3,7 @@ namespace DrdPlus\Tests\Person;
 
 use Granam\Tests\Exceptions\Tools\AbstractExceptionsHierarchyTest;
 
-class ExceptionsHierarchyTest extends AbstractExceptionsHierarchyTest
+class PersonExceptionsHierarchyTest extends AbstractExceptionsHierarchyTest
 {
     protected function getTestedNamespace()
     {
