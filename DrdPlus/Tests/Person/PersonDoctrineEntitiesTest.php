@@ -33,6 +33,7 @@ use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
 use DrdPlus\Tests\Health\HealthDoctrineEntitiesTest;
 use DrdPlus\Tests\Person\Skills\PersonSkillsDoctrineEntitiesTest;
+use DrdPlus\Tests\Stamina\StaminaEntitiesTest;
 
 class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
@@ -67,9 +68,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 
     protected function getExpectedEntityClasses()
     {
-        return [
-            Person::class
-        ];
+        return [Person::class];
     }
 
     protected function createEntitiesToPersist()
@@ -80,8 +79,8 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         return array_merge(
             (new PersonSkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
             (new HealthDoctrineEntitiesTest())->createEntitiesToPersist(),
+            (new StaminaEntitiesTest())->createEntitiesToPersist(),
             [
-                new Stamina(),
                 $this->createPersonEntity($tables, $exceptionalityPropertiesFactory),
                 PersonSkillsDoctrineEntitiesTest::createPersonSkillsEntity($tables),
                 \DrdPlus\Tests\Person\Background\DoctrineEntitiesTest::createBackgroundEntity(),
