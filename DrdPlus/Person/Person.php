@@ -4,17 +4,20 @@ namespace DrdPlus\Person;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrineum\Entity\Entity;
 use Drd\Genders\Gender;
+use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Person\Skills\PersonSkills;
+use DrdPlus\Properties\Derived\WoundBoundary;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
+use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Measurements\Experiences\ExperiencesTable;
 use DrdPlus\Tables\Measurements\Experiences\Level as LevelBonus;
 use DrdPlus\Tables\Tables;
@@ -27,9 +30,7 @@ class Person extends StrictObject implements Entity
 {
     /**
      * @var integer
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer") @ORM\Id @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
     /**
@@ -67,6 +68,16 @@ class Person extends StrictObject implements Entity
      * @ORM\OneToOne(targetEntity="\DrdPlus\GamingSession\Memories", cascade={"persist"})
      */
     private $memories;
+    /**
+     * @var Health
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Health\Health", cascade={"persist"})
+     */
+    private $health;
+    /**
+     * @var Stamina
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Stamina\Stamina", cascade={"persist"})
+     */
+    private $stamina;
     /**
      * @var Background
      * @ORM\OneToOne(targetEntity="DrdPlus\Person\Background\Background", cascade={"persist"})
@@ -139,6 +150,8 @@ class Person extends StrictObject implements Entity
         $this->heightInCm = $heightInCm;
         $this->age = $age;
         $this->personSkills = $personSkills;
+        $this->health = new Health(new WoundBoundary($this->getPropertiesByLevels($tables)->getToughness(), $tables->getWoundsTable()));
+        $this->stamina = new Stamina();
     }
 
     private function checkLevelsAgainstExperiences(
@@ -222,6 +235,22 @@ class Person extends StrictObject implements Entity
     }
 
     /**
+     * @return Health
+     */
+    public function getHealth()
+    {
+        return $this->health;
+    }
+
+    /**
+     * @return Stamina
+     */
+    public function getStamina()
+    {
+        return $this->stamina;
+    }
+
+    /**
      * @return ProfessionLevels
      */
     public function getProfessionLevels()
@@ -251,7 +280,7 @@ class Person extends StrictObject implements Entity
      * @param Tables $tables
      * @return PropertiesByLevels
      */
-    public function getProperties(Tables $tables)
+    public function getPropertiesByLevels(Tables $tables)
     {
         if ($this->propertiesByLevels === null) {
             $this->propertiesByLevels = new PropertiesByLevels( // enums aggregate

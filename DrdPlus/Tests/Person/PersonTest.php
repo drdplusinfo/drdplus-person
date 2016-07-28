@@ -4,6 +4,7 @@ namespace DrdPlus\Tests\Person;
 use Drd\Genders\Gender;
 use DrdPlus\Codes\ProfessionCode;
 use DrdPlus\Codes\RaceCode;
+use DrdPlus\Codes\SubRaceCode;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
@@ -68,11 +69,11 @@ class PersonTest extends TestWithMockery
         self::assertSame($personSkills, $person->getPersonSkills());
         self::assertInstanceOf(
             PropertiesByLevels::class,
-            $propertiesByLevels = $person->getProperties(new Tables())
+            $propertiesByLevels = $person->getPropertiesByLevels(new Tables())
         );
         self::assertSame(
             $propertiesByLevels,
-            $propertiesByLevels = $person->getProperties(new Tables()),
+            $propertiesByLevels = $person->getPropertiesByLevels(new Tables()),
             'Same instance of person properties expected'
         );
         // note: tables are for inner purpose only, does not have getter
@@ -144,7 +145,7 @@ class PersonTest extends TestWithMockery
         $race->shouldReceive('getRaceCode')
             ->andReturn(RaceCode::HUMAN);
         $race->shouldReceive('getSubraceCode')
-            ->andReturn(RaceCode::COMMON);
+            ->andReturn(SubRaceCode::COMMON);
         $race->shouldReceive('getSenses')
             ->andReturn(0);
 

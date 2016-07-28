@@ -7,6 +7,7 @@ use DrdPlus\Exceptionalities\Choices\PlayerDecision;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Fates\FateOfGoodRear;
 use DrdPlus\Exceptionalities\Properties\ExceptionalityPropertiesFactory;
+use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\EnumTypes\PersonEnumRegistrar;
@@ -24,14 +25,14 @@ use DrdPlus\Person\Skills\PersonSkills;
 use DrdPlus\Person\Skills\Physical\PersonPhysicalSkills;
 use DrdPlus\Person\Skills\Psychical\PersonPsychicalSkills;
 use DrdPlus\Professions\Fighter;
-use DrdPlus\Professions\Ranger;
-use DrdPlus\Professions\Thief;
-use DrdPlus\Professions\Wizard;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Humans\CommonHuman;
+use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
+use DrdPlus\Tests\Health\HealthDoctrineEntitiesTest;
+use DrdPlus\Tests\Person\Skills\PersonSkillsDoctrineEntitiesTest;
 
 class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
@@ -49,6 +50,8 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         $gamingSessionReflection = new \ReflectionClass(GamingSession::class);
         $professionLevelReflection = new \ReflectionClass(ProfessionLevel::class);
         $exceptionalityReflection = new \ReflectionClass(Exceptionality::class);
+        $staminaEntityReflection = new \ReflectionClass(Stamina::class);
+        $healthEntityReflection = new \ReflectionClass(Health::class);
 
         return [
             dirname($personReflection->getFileName()),
@@ -57,6 +60,8 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             dirname($gamingSessionReflection->getFileName()),
             dirname($professionLevelReflection->getFileName()),
             dirname($exceptionalityReflection->getFileName()),
+            dirname($staminaEntityReflection->getFileName()),
+            dirname($healthEntityReflection->getFileName()),
         ];
     }
 
@@ -73,9 +78,12 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         $exceptionalityPropertiesFactory = new ExceptionalityPropertiesFactory();
 
         return array_merge(
+            (new PersonSkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
+            (new HealthDoctrineEntitiesTest())->createEntitiesToPersist(),
             [
+                new Stamina(),
                 $this->createPersonEntity($tables, $exceptionalityPropertiesFactory),
-                \DrdPlus\Tests\Person\Skills\DoctrineEntitiesTest::createPersonSkillsEntity($tables),
+                PersonSkillsDoctrineEntitiesTest::createPersonSkillsEntity($tables),
                 \DrdPlus\Tests\Person\Background\DoctrineEntitiesTest::createBackgroundEntity(),
                 new Memories(),
                 new Adventure(new Memories(), 'foo'),
@@ -90,16 +98,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 ),
             ],
             \DrdPlus\Tests\Exceptionalities\DoctrineEntitiesTest::createEntities(),
-            \DrdPlus\Tests\Person\ProfessionLevels\DoctrineEntitiesTest::createEntities(),
-            \DrdPlus\Tests\Person\Skills\DoctrineEntitiesTest::createPhysicalSkillEntities(
-                $tables, ProfessionFirstLevel::createFirstLevel(Wizard::getIt())
-            ),
-            \DrdPlus\Tests\Person\Skills\DoctrineEntitiesTest::createPsychicalSkillEntities(
-                $tables, ProfessionFirstLevel::createFirstLevel(Thief::getIt())
-            ),
-            \DrdPlus\Tests\Person\Skills\DoctrineEntitiesTest::createCombinedSkillEntities(
-                $tables, ProfessionFirstLevel::createFirstLevel(Ranger::getIt())
-            )
+            \DrdPlus\Tests\Person\ProfessionLevels\DoctrineEntitiesTest::createEntities()
         );
     }
 
@@ -117,9 +116,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 $fate = FateOfGoodRear::getIt(),
                 $exceptionalityPropertiesFactory->createChosenProperties(
                     $fate,
-                    $professionFirstLevel = ProfessionFirstLevel::createFirstLevel(
-                        Fighter::getIt()
-                    ),
+                    $professionFirstLevel = ProfessionFirstLevel::createFirstLevel(Fighter::getIt()),
                     0,
                     1,
                     1,
