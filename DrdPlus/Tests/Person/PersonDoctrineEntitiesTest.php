@@ -31,9 +31,11 @@ use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Humans\CommonHuman;
 use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
+use DrdPlus\Tests\Exceptionalities\ExceptionalitiesDoctrineEntitiesTest;
 use DrdPlus\Tests\Health\HealthDoctrineEntitiesTest;
+use DrdPlus\Tests\Person\ProfessionLevels\ProfessionLevelsDoctrineEntitiesTest;
 use DrdPlus\Tests\Person\Skills\PersonSkillsDoctrineEntitiesTest;
-use DrdPlus\Tests\Stamina\StaminaEntitiesTest;
+use DrdPlus\Tests\Stamina\StaminaDoctrineEntitiesTest;
 
 class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
@@ -79,7 +81,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         return array_merge(
             (new PersonSkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
             (new HealthDoctrineEntitiesTest())->createEntitiesToPersist(),
-            (new StaminaEntitiesTest())->createEntitiesToPersist(),
+            (new StaminaDoctrineEntitiesTest())->createEntitiesToPersist(),
             [
                 $this->createPersonEntity($tables, $exceptionalityPropertiesFactory),
                 PersonSkillsDoctrineEntitiesTest::createPersonSkillsEntity($tables),
@@ -96,8 +98,8 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                     'baz'
                 ),
             ],
-            \DrdPlus\Tests\Exceptionalities\DoctrineEntitiesTest::createEntities(),
-            \DrdPlus\Tests\Person\ProfessionLevels\DoctrineEntitiesTest::createEntities()
+            ExceptionalitiesDoctrineEntitiesTest::createEntities(),
+            ProfessionLevelsDoctrineEntitiesTest::createEntities()
         );
     }
 
