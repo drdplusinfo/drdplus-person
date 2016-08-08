@@ -326,4 +326,61 @@ class Person extends StrictObject implements Entity
             );
     }
 
+    /**
+     * @param MeleeWeaponCode $meleeWeaponCode
+     * @param Tables $tables
+     * @return int
+     */
+    public function getMalusToAttackNumberWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
+    {
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        return
+            $this->getPersonSkills()->getMalusToAttackNumber(
+                $meleeWeaponCode,
+                $tables->getMissingWeaponSkillsTable()
+            )
+            + $tables->getArmourer()->getMeleeWeaponAttackNumberMalus(
+                $meleeWeaponCode,
+                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
+            );
+    }
+
+    /**
+     * @param MeleeWeaponCode $meleeWeaponCode
+     * @param Tables $tables
+     * @return int
+     */
+    public function getMalusToDefenseNumberWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
+    {
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        return
+            $this->getPersonSkills()->getMalusToCover(
+                $meleeWeaponCode,
+                $tables->getMissingWeaponSkillsTable()
+            )
+            + $tables->getArmourer()->getMeleeWeaponDefenseNumberMalus(
+                $meleeWeaponCode,
+                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
+            );
+    }
+
+    /**
+     * @param MeleeWeaponCode $meleeWeaponCode
+     * @param Tables $tables
+     * @return int
+     */
+    public function getMalusToBaseOfWoundsWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
+    {
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+        return
+            $this->getPersonSkills()->getMalusToBaseOfWounds(
+                $meleeWeaponCode,
+                $tables->getMissingWeaponSkillsTable()
+            )
+            + $tables->getArmourer()->getMeleeWeaponBaseOfWoundsMalus(
+                $meleeWeaponCode,
+                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
+            );
+    }
+
 }

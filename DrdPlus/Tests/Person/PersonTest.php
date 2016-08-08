@@ -357,20 +357,20 @@ class PersonTest extends TestWithMockery
     /**
      * @test
      */
-    public function I_can_get_fight_with_melee_weapon_malus()
+    public function I_can_get_melee_weapon_fight_number_malus()
     {
         $person = new Person(
-            $race = $this->createRace(),
-            $gender = $this->createGender(),
-            $name = $this->createName(),
-            $exceptionality = $this->createExceptionality(),
-            $memories = $this->createMemories(),
-            $professionLevels = $this->createProfessionLevels(),
-            $background = $this->createBackground(),
+            $this->createRace(),
+            $this->createGender(),
+            $this->createName(),
+            $this->createExceptionality(),
+            $this->createMemories(),
+            $this->createProfessionLevels(),
+            $this->createBackground(),
             $personSkills = $this->createPersonSkills(),
-            $weightInKgAdjustment = $this->createWeightInKgAdjustment(),
-            $heightInCm = $this->createHeightInCm(),
-            $age = $this->createAge(),
+            $this->createWeightInKgAdjustment(),
+            $this->createHeightInCm(),
+            $this->createAge(),
             new Tables()
         );
         $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
@@ -387,6 +387,123 @@ class PersonTest extends TestWithMockery
         self::assertSame(
             -468,
             $person->getMalusToFightNumberWithMeleeWeapon(
+                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
+                $tables
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function I_can_get_melee_weapon_attack_number_malus()
+    {
+        $person = new Person(
+            $this->createRace(),
+            $this->createGender(),
+            $this->createName(),
+            $this->createExceptionality(),
+            $this->createMemories(),
+            $this->createProfessionLevels(),
+            $this->createBackground(),
+            $personSkills = $this->createPersonSkills(),
+            $this->createWeightInKgAdjustment(),
+            $this->createHeightInCm(),
+            $this->createAge(),
+            new Tables()
+        );
+        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
+        $personSkills->shouldReceive('getMalusToAttackNumber')
+            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
+            ->andReturn(-147);
+        $tables = $this->mockery(Tables::class);
+        $tables->shouldReceive('getArmourer')
+            ->andReturn($armourer = $this->mockery(Armourer::class));
+        $armourer->shouldReceive('getMeleeWeaponAttackNumberMalus')
+            ->andReturn(-963);
+        $tables->shouldReceive('getMissingWeaponSkillsTable')
+            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
+        self::assertSame(
+            -1110,
+            $person->getMalusToAttackNumberWithMeleeWeapon(
+                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
+                $tables
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function I_can_get_melee_weapon_defense_number_malus()
+    {
+        $person = new Person(
+            $this->createRace(),
+            $this->createGender(),
+            $this->createName(),
+            $this->createExceptionality(),
+            $this->createMemories(),
+            $this->createProfessionLevels(),
+            $this->createBackground(),
+            $personSkills = $this->createPersonSkills(),
+            $this->createWeightInKgAdjustment(),
+            $this->createHeightInCm(),
+            $this->createAge(),
+            new Tables()
+        );
+        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
+        $personSkills->shouldReceive('getMalusToCover')
+            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
+            ->andReturn(-1);
+        $tables = $this->mockery(Tables::class);
+        $tables->shouldReceive('getArmourer')
+            ->andReturn($armourer = $this->mockery(Armourer::class));
+        $armourer->shouldReceive('getMeleeWeaponDefenseNumberMalus')
+            ->andReturn(-2);
+        $tables->shouldReceive('getMissingWeaponSkillsTable')
+            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
+        self::assertSame(
+            -3,
+            $person->getMalusToDefenseNumberWithMeleeWeapon(
+                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
+                $tables
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function I_can_get_melee_weapon_base_of_wounds_malus()
+    {
+        $person = new Person(
+            $this->createRace(),
+            $this->createGender(),
+            $this->createName(),
+            $this->createExceptionality(),
+            $this->createMemories(),
+            $this->createProfessionLevels(),
+            $this->createBackground(),
+            $personSkills = $this->createPersonSkills(),
+            $this->createWeightInKgAdjustment(),
+            $this->createHeightInCm(),
+            $this->createAge(),
+            new Tables()
+        );
+        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
+        $personSkills->shouldReceive('getMalusToBaseOfWounds')
+            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
+            ->andReturn(-4);
+        $tables = $this->mockery(Tables::class);
+        $tables->shouldReceive('getArmourer')
+            ->andReturn($armourer = $this->mockery(Armourer::class));
+        $armourer->shouldReceive('getMeleeWeaponBaseOfWoundsMalus')
+            ->andReturn(-9);
+        $tables->shouldReceive('getMissingWeaponSkillsTable')
+            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
+        self::assertSame(
+            -13,
+            $person->getMalusToBaseOfWoundsWithMeleeWeapon(
                 MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
                 $tables
             )
