@@ -18,7 +18,7 @@
     "drd-plus/properties": "dev-master",
     "drd-plus/races": "dev-master",
     "drd-plus/tables": "dev-master",
-    "drd-plus/person-skills": "dev-master",
+    "drd-plus/skills": "dev-master",
     "drd-plus/person-gaming-session": "dev-master",
     "doctrineum/entity": "dev-master",
     "doctrineum/string": "dev-master",
