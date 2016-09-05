@@ -19,11 +19,11 @@ use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\ProfessionFirstLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
-use DrdPlus\Person\Skills\Combined\PersonCombinedSkills;
-use DrdPlus\Person\Skills\PersonSkill;
-use DrdPlus\Person\Skills\PersonSkills;
-use DrdPlus\Person\Skills\Physical\PersonPhysicalSkills;
-use DrdPlus\Person\Skills\Psychical\PersonPsychicalSkills;
+use DrdPlus\Skills\Combined\CombinedSkills;
+use DrdPlus\Skills\Skill;
+use DrdPlus\Skills\Skills;
+use DrdPlus\Skills\Physical\PhysicalSkills;
+use DrdPlus\Skills\Psychical\PsychicalSkills;
 use DrdPlus\Professions\Fighter;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
@@ -33,8 +33,9 @@ use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
 use DrdPlus\Tests\Exceptionalities\ExceptionalitiesDoctrineEntitiesTest;
 use DrdPlus\Tests\Health\HealthDoctrineEntitiesTest;
+use DrdPlus\Tests\Person\Background\PersonBackgroundDoctrineEntitiesTest;
 use DrdPlus\Tests\Person\ProfessionLevels\ProfessionLevelsDoctrineEntitiesTest;
-use DrdPlus\Tests\Person\Skills\PersonSkillsDoctrineEntitiesTest;
+use DrdPlus\Tests\Skills\SkillsDoctrineEntitiesTest;
 use DrdPlus\Tests\Stamina\StaminaDoctrineEntitiesTest;
 
 class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
@@ -48,7 +49,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
     protected function getDirsWithEntities()
     {
         $personReflection = new \ReflectionClass(Person::class);
-        $personSkillReflection = new \ReflectionClass(PersonSkill::class);
+        $personSkillReflection = new \ReflectionClass(Skill::class);
         $backgroundReflection = new \ReflectionClass(Background::class);
         $gamingSessionReflection = new \ReflectionClass(GamingSession::class);
         $professionLevelReflection = new \ReflectionClass(ProfessionLevel::class);
@@ -79,13 +80,13 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         $exceptionalityPropertiesFactory = new ExceptionalityPropertiesFactory();
 
         return array_merge(
-            (new PersonSkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
+            (new SkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
             (new HealthDoctrineEntitiesTest())->createEntitiesToPersist(),
             (new StaminaDoctrineEntitiesTest())->createEntitiesToPersist(),
             [
                 $this->createPersonEntity($tables, $exceptionalityPropertiesFactory),
-                PersonSkillsDoctrineEntitiesTest::createPersonSkillsEntity($tables),
-                \DrdPlus\Tests\Person\Background\DoctrineEntitiesTest::createBackgroundEntity(),
+                SkillsDoctrineEntitiesTest::createSkillsEntity($tables),
+                PersonBackgroundDoctrineEntitiesTest::createBackgroundEntity(),
                 new Memories(),
                 new Adventure(new Memories(), 'foo'),
                 new GamingSession(
@@ -134,13 +135,13 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 3,
                 5
             ),
-            PersonSkills::createPersonSkills(
+            Skills::createSkills(
                 $professionLevels,
                 $background->getBackgroundSkillPoints(),
                 $tables,
-                new PersonPhysicalSkills(),
-                new PersonPsychicalSkills(),
-                new PersonCombinedSkills()
+                new PhysicalSkills(),
+                new PsychicalSkills(),
+                new CombinedSkills()
             ),
             WeightInKg::getIt(123.45),
             HeightInCm::getIt(78.89),

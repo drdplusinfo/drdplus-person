@@ -2,7 +2,6 @@
 namespace DrdPlus\Tests\Person;
 
 use Drd\Genders\Gender;
-use DrdPlus\Codes\MeleeWeaponCode;
 use DrdPlus\Codes\ProfessionCode;
 use DrdPlus\Codes\RaceCode;
 use DrdPlus\Codes\SubRaceCode;
@@ -17,7 +16,6 @@ use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\LevelRank;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
-use DrdPlus\Person\Skills\PersonSkills;
 use DrdPlus\Professions\Profession;
 use DrdPlus\Properties\Base\Agility;
 use DrdPlus\Properties\Base\BaseProperty;
@@ -31,8 +29,7 @@ use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Races\Race;
-use DrdPlus\Tables\Armaments\Armourer;
-use DrdPlus\Tables\Armaments\Weapons\MissingWeaponSkillsTable;
+use DrdPlus\Skills\Skills;
 use DrdPlus\Tables\Measurements\Experiences\Experiences;
 use DrdPlus\Tables\Tables;
 use Granam\Tests\Tools\TestWithMockery;
@@ -53,7 +50,7 @@ class PersonTest extends TestWithMockery
             $memories = $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(),
             $background = $this->createBackground(),
-            $personSkills = $this->createPersonSkills(),
+            $personSkills = $this->createSkills(),
             $weightInKgAdjustment = $this->createWeightInKgAdjustment(),
             $heightInCm = $this->createHeightInCm(),
             $age = $this->createAge(),
@@ -69,7 +66,7 @@ class PersonTest extends TestWithMockery
         self::assertSame($memories, $person->getMemories());
         self::assertSame($professionLevels, $person->getProfessionLevels());
         self::assertSame($background, $person->getBackground());
-        self::assertSame($personSkills, $person->getPersonSkills());
+        self::assertSame($personSkills, $person->getSkills());
         self::assertInstanceOf(
             PropertiesByLevels::class,
             $propertiesByLevels = $person->getPropertiesByLevels(new Tables())
@@ -99,7 +96,7 @@ class PersonTest extends TestWithMockery
             $this->createMemories(),
             $this->createProfessionLevels(),
             $this->createBackground(),
-            $this->createPersonSkills(),
+            $this->createSkills(),
             $this->createWeightInKgAdjustment(),
             $this->createHeightInCm(),
             $this->createAge(),
@@ -283,11 +280,11 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @return \Mockery\MockInterface|PersonSkills
+     * @return \Mockery\MockInterface|Skills
      */
-    private function createPersonSkills()
+    private function createSkills()
     {
-        return $this->mockery(PersonSkills::class);
+        return $this->mockery(Skills::class);
     }
 
     /**
@@ -346,167 +343,11 @@ class PersonTest extends TestWithMockery
             $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(2 /* highest level rank */),
             $this->createBackground(),
-            $this->createPersonSkills(),
+            $this->createSkills(),
             $this->createWeightInKgAdjustment(),
             $this->createHeightInCm(),
             $this->createAge(),
             new Tables()
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function I_can_get_melee_weapon_fight_number_malus()
-    {
-        $person = new Person(
-            $this->createRace(),
-            $this->createGender(),
-            $this->createName(),
-            $this->createExceptionality(),
-            $this->createMemories(),
-            $this->createProfessionLevels(),
-            $this->createBackground(),
-            $personSkills = $this->createPersonSkills(),
-            $this->createWeightInKgAdjustment(),
-            $this->createHeightInCm(),
-            $this->createAge(),
-            new Tables()
-        );
-        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
-        $personSkills->shouldReceive('getMalusToFightNumber')
-            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
-            ->andReturn(-123);
-        $tables = $this->mockery(Tables::class);
-        $tables->shouldReceive('getArmourer')
-            ->andReturn($armourer = $this->mockery(Armourer::class));
-        $armourer->shouldReceive('getMeleeWeaponFightNumberMalus')
-            ->andReturn(-345);
-        $tables->shouldReceive('getMissingWeaponSkillsTable')
-            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
-        self::assertSame(
-            -468,
-            $person->getMalusToFightNumberWithMeleeWeapon(
-                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
-                $tables
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function I_can_get_melee_weapon_attack_number_malus()
-    {
-        $person = new Person(
-            $this->createRace(),
-            $this->createGender(),
-            $this->createName(),
-            $this->createExceptionality(),
-            $this->createMemories(),
-            $this->createProfessionLevels(),
-            $this->createBackground(),
-            $personSkills = $this->createPersonSkills(),
-            $this->createWeightInKgAdjustment(),
-            $this->createHeightInCm(),
-            $this->createAge(),
-            new Tables()
-        );
-        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
-        $personSkills->shouldReceive('getMalusToAttackNumber')
-            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
-            ->andReturn(-147);
-        $tables = $this->mockery(Tables::class);
-        $tables->shouldReceive('getArmourer')
-            ->andReturn($armourer = $this->mockery(Armourer::class));
-        $armourer->shouldReceive('getMeleeWeaponAttackNumberMalus')
-            ->andReturn(-963);
-        $tables->shouldReceive('getMissingWeaponSkillsTable')
-            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
-        self::assertSame(
-            -1110,
-            $person->getMalusToAttackNumberWithMeleeWeapon(
-                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
-                $tables
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function I_can_get_melee_weapon_defense_number_malus()
-    {
-        $person = new Person(
-            $this->createRace(),
-            $this->createGender(),
-            $this->createName(),
-            $this->createExceptionality(),
-            $this->createMemories(),
-            $this->createProfessionLevels(),
-            $this->createBackground(),
-            $personSkills = $this->createPersonSkills(),
-            $this->createWeightInKgAdjustment(),
-            $this->createHeightInCm(),
-            $this->createAge(),
-            new Tables()
-        );
-        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
-        $personSkills->shouldReceive('getMalusToCover')
-            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
-            ->andReturn(-1);
-        $tables = $this->mockery(Tables::class);
-        $tables->shouldReceive('getArmourer')
-            ->andReturn($armourer = $this->mockery(Armourer::class));
-        $armourer->shouldReceive('getMeleeWeaponDefenseNumberMalus')
-            ->andReturn(-2);
-        $tables->shouldReceive('getMissingWeaponSkillsTable')
-            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
-        self::assertSame(
-            -3,
-            $person->getMalusToDefenseNumberWithMeleeWeapon(
-                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
-                $tables
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function I_can_get_melee_weapon_base_of_wounds_malus()
-    {
-        $person = new Person(
-            $this->createRace(),
-            $this->createGender(),
-            $this->createName(),
-            $this->createExceptionality(),
-            $this->createMemories(),
-            $this->createProfessionLevels(),
-            $this->createBackground(),
-            $personSkills = $this->createPersonSkills(),
-            $this->createWeightInKgAdjustment(),
-            $this->createHeightInCm(),
-            $this->createAge(),
-            new Tables()
-        );
-        $axe = MeleeWeaponCode::getIt(MeleeWeaponCode::AXE);
-        $personSkills->shouldReceive('getMalusToBaseOfWounds')
-            ->with($axe, \Mockery::type(MissingWeaponSkillsTable::class))
-            ->andReturn(-4);
-        $tables = $this->mockery(Tables::class);
-        $tables->shouldReceive('getArmourer')
-            ->andReturn($armourer = $this->mockery(Armourer::class));
-        $armourer->shouldReceive('getMeleeWeaponBaseOfWoundsMalus')
-            ->andReturn(-9);
-        $tables->shouldReceive('getMissingWeaponSkillsTable')
-            ->andReturn($missingWeaponSkillsTable = $this->mockery(MissingWeaponSkillsTable::class));
-        self::assertSame(
-            -13,
-            $person->getMalusToBaseOfWoundsWithMeleeWeapon(
-                MeleeWeaponCode::getIt(MeleeWeaponCode::AXE),
-                $tables
-            )
         );
     }
 

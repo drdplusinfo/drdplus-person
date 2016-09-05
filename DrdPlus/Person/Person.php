@@ -4,20 +4,19 @@ namespace DrdPlus\Person;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrineum\Entity\Entity;
 use Drd\Genders\Gender;
-use DrdPlus\Codes\MeleeWeaponCode;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
-use DrdPlus\Person\Skills\PersonSkills;
 use DrdPlus\Properties\Derived\WoundBoundary;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Race;
+use DrdPlus\Skills\Skills;
 use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Measurements\Experiences\ExperiencesTable;
 use DrdPlus\Tables\Measurements\Experiences\Level as LevelBonus;
@@ -85,8 +84,8 @@ class Person extends StrictObject implements Entity
      */
     private $background;
     /**
-     * @var PersonSkills
-     * @ORM\OneToOne(targetEntity="DrdPlus\Person\Skills\PersonSkills", cascade={"persist"})
+     * @var Skills
+     * @ORM\OneToOne(targetEntity="DrdPlus\Skills\Skills", cascade={"persist"})
      */
     private $personSkills;
     /**
@@ -107,6 +106,7 @@ class Person extends StrictObject implements Entity
 
     /**
      * Person constructor.
+     *
      * @param Race $race
      * @param Gender $gender
      * @param Name $name
@@ -114,7 +114,7 @@ class Person extends StrictObject implements Entity
      * @param Memories $memories
      * @param ProfessionLevels $professionLevels
      * @param Background $background
-     * @param PersonSkills $personSkills
+     * @param Skills $personSkills
      * @param WeightInKg $weightInKgAdjustment
      * @param HeightInCm $heightInCm
      * @param Age $age
@@ -128,7 +128,7 @@ class Person extends StrictObject implements Entity
         Memories $memories, // entity
         ProfessionLevels $professionLevels, // entity
         Background $background, // entity
-        PersonSkills $personSkills, // entity
+        Skills $personSkills, // entity
         WeightInKg $weightInKgAdjustment, // value
         HeightInCm $heightInCm, // value
         Age $age, // value
@@ -268,15 +268,15 @@ class Person extends StrictObject implements Entity
     }
 
     /**
-     * @return PersonSkills
+     * @return Skills
      */
-    public function getPersonSkills()
+    public function getSkills()
     {
         return $this->personSkills;
     }
 
     /**
-     * Those are lazy loaded and re-calculated on every entity reload if those requested
+     * Those are lazy loaded (and re-calculated on every entity reload when first time requested)
      *
      * @param Tables $tables
      * @return PropertiesByLevels
@@ -284,6 +284,7 @@ class Person extends StrictObject implements Entity
     public function getPropertiesByLevels(Tables $tables)
     {
         if ($this->propertiesByLevels === null) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
             $this->propertiesByLevels = new PropertiesByLevels( // enums aggregate
                 $this->getRace(),
                 $this->getGender(),
@@ -305,82 +306,6 @@ class Person extends StrictObject implements Entity
     public function getProfession()
     {
         return $this->getProfessionLevels()->getFirstLevel()->getProfession();
-    }
-
-    /**
-     * @param MeleeWeaponCode $meleeWeaponCode
-     * @param Tables $tables
-     * @return int
-     */
-    public function getMalusToFightNumberWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
-    {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        return
-            $this->getPersonSkills()->getMalusToFightNumber(
-                $meleeWeaponCode,
-                $tables->getMissingWeaponSkillsTable()
-            )
-            + $tables->getArmourer()->getMeleeWeaponFightNumberMalus(
-                $meleeWeaponCode,
-                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
-            );
-    }
-
-    /**
-     * @param MeleeWeaponCode $meleeWeaponCode
-     * @param Tables $tables
-     * @return int
-     */
-    public function getMalusToAttackNumberWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
-    {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        return
-            $this->getPersonSkills()->getMalusToAttackNumber(
-                $meleeWeaponCode,
-                $tables->getMissingWeaponSkillsTable()
-            )
-            + $tables->getArmourer()->getMeleeWeaponAttackNumberMalus(
-                $meleeWeaponCode,
-                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
-            );
-    }
-
-    /**
-     * @param MeleeWeaponCode $meleeWeaponCode
-     * @param Tables $tables
-     * @return int
-     */
-    public function getMalusToDefenseNumberWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
-    {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        return
-            $this->getPersonSkills()->getMalusToCover(
-                $meleeWeaponCode,
-                $tables->getMissingWeaponSkillsTable()
-            )
-            + $tables->getArmourer()->getMeleeWeaponDefenseNumberMalus(
-                $meleeWeaponCode,
-                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
-            );
-    }
-
-    /**
-     * @param MeleeWeaponCode $meleeWeaponCode
-     * @param Tables $tables
-     * @return int
-     */
-    public function getMalusToBaseOfWoundsWithMeleeWeapon(MeleeWeaponCode $meleeWeaponCode, Tables $tables)
-    {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        return
-            $this->getPersonSkills()->getMalusToBaseOfWounds(
-                $meleeWeaponCode,
-                $tables->getMissingWeaponSkillsTable()
-            )
-            + $tables->getArmourer()->getMeleeWeaponBaseOfWoundsMalus(
-                $meleeWeaponCode,
-                $this->getPropertiesByLevels($tables)->getStrength()->getValue()
-            );
     }
 
 }
