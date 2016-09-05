@@ -10,7 +10,6 @@ use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
-use DrdPlus\Properties\Derived\WoundBoundary;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
@@ -151,7 +150,7 @@ class Person extends StrictObject implements Entity
         $this->heightInCm = $heightInCm;
         $this->age = $age;
         $this->personSkills = $personSkills;
-        $this->health = new Health(new WoundBoundary($this->getPropertiesByLevels($tables)->getToughness(), $tables->getWoundsTable()));
+        $this->health = new Health();
         $this->stamina = new Stamina();
     }
 
