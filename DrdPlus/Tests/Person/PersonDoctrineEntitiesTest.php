@@ -10,7 +10,7 @@ use DrdPlus\Exceptionalities\Properties\ExceptionalityPropertiesFactory;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Person\Background\Background;
-use DrdPlus\Person\EnumTypes\PersonEnumRegistrar;
+use DrdPlus\Person\EnumTypes\PersonEnumsRegistrar;
 use DrdPlus\GamingSession\Adventure;
 use DrdPlus\GamingSession\GamingSession;
 use DrdPlus\GamingSession\GamingSessionCategoryExperiences;
@@ -42,7 +42,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
     protected function setUp()
     {
-        PersonEnumRegistrar::registerAll();
+        PersonEnumsRegistrar::registerAll();
         parent::setUp();
     }
 

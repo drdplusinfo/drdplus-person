@@ -13,7 +13,7 @@ use DrdPlus\Properties\EnumTypes\PropertiesEnumRegistrar;
 use DrdPlus\Races\EnumTypes\RacesEnumRegistrar;
 use DrdPlus\Stamina\EnumTypes\StaminaEnumsRegistrar;
 
-class PersonEnumRegistrar
+class PersonEnumsRegistrar
 {
     public static function registerAll()
     {
@@ -27,7 +27,6 @@ class PersonEnumRegistrar
         ExceptionalitiesEnumRegistrar::registerAll();
         StaminaEnumsRegistrar::registerAll();
         HealthEnumsRegistrar::registerAll();
-
         NameType::registerSelf();
     }
 }
