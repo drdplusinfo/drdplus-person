@@ -19,6 +19,8 @@ use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\ProfessionFirstLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
+use DrdPlus\Person\ProfessionLevels\ProfessionZeroLevel;
+use DrdPlus\Professions\Commoner;
 use DrdPlus\Skills\Combined\CombinedSkills;
 use DrdPlus\Skills\Skill;
 use DrdPlus\Skills\Skills;
@@ -128,7 +130,10 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 )
             ),
             new Memories(),
-            $professionLevels = new ProfessionLevels($professionFirstLevel),
+            $professionLevels = new ProfessionLevels(
+                ProfessionZeroLevel::createZeroLevel(Commoner::getIt()),
+                $professionFirstLevel
+            ),
             $background = Background::createIt(
                 $fate,
                 4,
@@ -138,10 +143,10 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             Skills::createSkills(
                 $professionLevels,
                 $background->getBackgroundSkillPoints(),
-                $tables,
-                new PhysicalSkills(),
-                new PsychicalSkills(),
-                new CombinedSkills()
+                new PhysicalSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
+                new PsychicalSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
+                new CombinedSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
+                $tables
             ),
             WeightInKg::getIt(123.45),
             HeightInCm::getIt(78.89),
