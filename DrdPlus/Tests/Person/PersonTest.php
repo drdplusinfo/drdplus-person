@@ -148,9 +148,9 @@ class PersonTest extends TestWithMockery
         $race->shouldReceive('getSize')
             ->andReturn(0);
         $race->shouldReceive('getRaceCode')
-            ->andReturn(RaceCode::HUMAN);
+            ->andReturn(RaceCode::getIt(RaceCode::HUMAN));
         $race->shouldReceive('getSubraceCode')
-            ->andReturn(SubRaceCode::COMMON);
+            ->andReturn(SubRaceCode::getIt(SubRaceCode::COMMON));
         $race->shouldReceive('getSenses')
             ->andReturn(0);
 
