@@ -1,7 +1,7 @@
 <?php
 namespace DrdPlus\Person\EnumTypes;
 
-use Drd\Genders\EnumTypes\GendersEnumRegistrar;
+use DrdPlus\Genders\EnumTypes\GendersEnumRegistrar;
 use DrdPlus\Exceptionalities\EnumTypes\ExceptionalitiesEnumRegistrar;
 use DrdPlus\GamingSession\EnumTypes\GamingSessionEnumRegistrar;
 use DrdPlus\Health\EnumTypes\HealthEnumsRegistrar;

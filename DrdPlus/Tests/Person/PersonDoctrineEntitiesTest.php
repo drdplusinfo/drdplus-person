@@ -2,7 +2,7 @@
 namespace DrdPlus\Tests\Person;
 
 use Doctrineum\Tests\Entity\AbstractDoctrineEntitiesTest;
-use Drd\Genders\Male;
+use DrdPlus\Genders\Male;
 use DrdPlus\Exceptionalities\Choices\PlayerDecision;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Fates\FateOfGoodRear;
