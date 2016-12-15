@@ -2,7 +2,13 @@
 namespace DrdPlus\Tests\Person;
 
 use Doctrineum\Tests\Entity\AbstractDoctrineEntitiesTest;
-use DrdPlus\Genders\Male;
+use DrdPlus\Codes\Armaments\BodyArmorCode;
+use DrdPlus\Codes\Armaments\HelmCode;
+use DrdPlus\Codes\Armaments\MeleeWeaponCode;
+use DrdPlus\Codes\Armaments\ShieldCode;
+use DrdPlus\Codes\GenderCode;
+use DrdPlus\Equipment\Belongings;
+use DrdPlus\Equipment\Equipment;
 use DrdPlus\Exceptionalities\Choices\PlayerDecision;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Fates\FateOfGoodRear;
@@ -33,6 +39,7 @@ use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Humans\CommonHuman;
 use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
+use DrdPlus\Tests\Equipment\EquipmentDoctrineEntitiesTest;
 use DrdPlus\Tests\Exceptionalities\ExceptionalitiesDoctrineEntitiesTest;
 use DrdPlus\Tests\Health\HealthDoctrineEntitiesTest;
 use DrdPlus\Tests\Person\Background\PersonBackgroundDoctrineEntitiesTest;
@@ -50,25 +57,24 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 
     protected function getDirsWithEntities()
     {
-        $personReflection = new \ReflectionClass(Person::class);
-        $personSkillReflection = new \ReflectionClass(Skill::class);
-        $backgroundReflection = new \ReflectionClass(Background::class);
-        $gamingSessionReflection = new \ReflectionClass(GamingSession::class);
-        $professionLevelReflection = new \ReflectionClass(ProfessionLevel::class);
-        $exceptionalityReflection = new \ReflectionClass(Exceptionality::class);
-        $staminaEntityReflection = new \ReflectionClass(Stamina::class);
-        $healthEntityReflection = new \ReflectionClass(Health::class);
-
-        return [
-            dirname($personReflection->getFileName()),
-            dirname($personSkillReflection->getFileName()),
-            dirname($backgroundReflection->getFileName()),
-            dirname($gamingSessionReflection->getFileName()),
-            dirname($professionLevelReflection->getFileName()),
-            dirname($exceptionalityReflection->getFileName()),
-            dirname($staminaEntityReflection->getFileName()),
-            dirname($healthEntityReflection->getFileName()),
+        $classesInWantedDirs = [
+            Person::class,
+            Skill::class,
+            Background::class,
+            GamingSession::class,
+            ProfessionLevel::class,
+            Exceptionality::class,
+            Stamina::class,
+            Health::class,
+            Equipment::class
         ];
+
+        return array_map(
+            function ($className) {
+                return dirname((new \ReflectionClass($className))->getFileName());
+            },
+            $classesInWantedDirs
+        );
     }
 
     protected function getExpectedEntityClasses()
@@ -85,6 +91,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             (new SkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
             (new HealthDoctrineEntitiesTest())->createEntitiesToPersist(),
             (new StaminaDoctrineEntitiesTest())->createEntitiesToPersist(),
+            (new EquipmentDoctrineEntitiesTest())->createEntitiesToPersist(),
             [
                 $this->createPersonEntity($tables, $exceptionalityPropertiesFactory),
                 SkillsDoctrineEntitiesTest::createSkillsEntity($tables),
@@ -112,9 +119,9 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
     )
     {
         return new Person(
+            new Name('foo'),
             CommonHuman::getIt(),
-            Male::getIt(),
-            Name::getIt('foo'),
+            GenderCode::getIt(GenderCode::MALE),
             new Exceptionality(
                 PlayerDecision::getIt(),
                 $fate = FateOfGoodRear::getIt(),
@@ -134,12 +141,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 ProfessionZeroLevel::createZeroLevel(Commoner::getIt()),
                 $professionFirstLevel
             ),
-            $background = Background::createIt(
-                $fate,
-                4,
-                3,
-                5
-            ),
+            $background = Background::createIt($fate, 4, 3, 5),
             Skills::createSkills(
                 $professionLevels,
                 $background->getBackgroundSkillPoints(),
@@ -151,6 +153,13 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             WeightInKg::getIt(123.45),
             HeightInCm::getIt(78.89),
             Age::getIt(56),
+            new Equipment(
+                new Belongings(),
+                BodyArmorCode::getIt(BodyArmorCode::CHAINMAIL_ARMOR),
+                HelmCode::getIt(HelmCode::WITHOUT_HELM),
+                ShieldCode::getIt(ShieldCode::HEAVY_SHIELD),
+                MeleeWeaponCode::getIt(MeleeWeaponCode::HAND)
+            ),
             $tables
         );
     }

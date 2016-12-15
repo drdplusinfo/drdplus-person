@@ -10,7 +10,6 @@ php:
 matrix:
   allow_failures:
     - php: nightly
-    - php: hhvm-nightly
 
 before_script:
   - if [[ $TRAVIS_PHP_VERSION =~ ^[0-9]+[.][0-9]+$ ]]; then phpenv config-rm xdebug.ini; fi

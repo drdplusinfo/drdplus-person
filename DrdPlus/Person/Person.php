@@ -3,7 +3,9 @@ namespace DrdPlus\Person;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrineum\Entity\Entity;
-use DrdPlus\Genders\Gender;
+use DrdPlus\Codes\GenderCode;
+use DrdPlus\CurrentProperties\CurrentProperties;
+use DrdPlus\Equipment\Equipment;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Exceptionalities\Exceptionality;
@@ -43,10 +45,10 @@ class Person extends StrictObject implements Entity
      */
     private $race;
     /**
-     * @var Gender
-     * @ORM\Column(type="gender")
+     * @var GenderCode
+     * @ORM\Column(type="gender_code")
      */
-    private $gender;
+    private $genderCode;
     /**
      * @var Exceptionality
      * @ORM\OneToOne(targetEntity="DrdPlus\Exceptionalities\Exceptionality", cascade={"persist"})
@@ -86,7 +88,7 @@ class Person extends StrictObject implements Entity
      * @var Skills
      * @ORM\OneToOne(targetEntity="DrdPlus\Skills\Skills", cascade={"persist"})
      */
-    private $personSkills;
+    private $skills;
     /**
      * @var WeightInKg
      * @ORM\Column(type="weight_in_kg")
@@ -102,41 +104,46 @@ class Person extends StrictObject implements Entity
      * @ORM\Column(type="age")
      */
     private $age;
+    /**
+     * @var Equipment
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Equipment\Equipment", cascade={"persist"})
+     */
+    private $equipment;
 
     /**
-     * Person constructor.
-     *
      * @param Race $race
-     * @param Gender $gender
+     * @param GenderCode $genderCode
      * @param Name $name
      * @param Exceptionality $exceptionality
      * @param Memories $memories
      * @param ProfessionLevels $professionLevels
      * @param Background $background
-     * @param Skills $personSkills
+     * @param Skills $skills
      * @param WeightInKg $weightInKgAdjustment
      * @param HeightInCm $heightInCm
      * @param Age $age
+     * @param Equipment $equipment
      * @param Tables $tables
      */
     public function __construct(
-        Race $race, // enum
-        Gender $gender, // enum
-        Name $name, // enum
+        Name $name, // value
+        Race $race, // enum (value)
+        GenderCode $genderCode, // enum (value)
         Exceptionality $exceptionality, // entity
         Memories $memories, // entity
         ProfessionLevels $professionLevels, // entity
         Background $background, // entity
-        Skills $personSkills, // entity
-        WeightInKg $weightInKgAdjustment, // value
-        HeightInCm $heightInCm, // value
-        Age $age, // value
-        Tables $tables // data helper
+        Skills $skills, // entity
+        WeightInKg $weightInKgAdjustment, // enum (value)
+        HeightInCm $heightInCm, // enum (value)
+        Age $age, // enum (value)
+        Equipment $equipment, // entity
+        Tables $tables // data helper (can not be persisted)
     )
     {
-        $this->race = $race;
-        $this->gender = $gender;
         $this->name = $name;
+        $this->race = $race;
+        $this->genderCode = $genderCode;
         $this->exceptionality = $exceptionality;
         $this->checkLevelsAgainstExperiences(
             $professionLevels,
@@ -146,10 +153,11 @@ class Person extends StrictObject implements Entity
         $this->memories = $memories;
         $this->professionLevels = $professionLevels;
         $this->background = $background;
+        $this->skills = $skills;
         $this->weightInKgAdjustment = $weightInKgAdjustment;
         $this->heightInCm = $heightInCm;
         $this->age = $age;
-        $this->personSkills = $personSkills;
+        $this->equipment = $equipment;
         $this->health = new Health();
         $this->stamina = new Stamina();
     }
@@ -181,7 +189,7 @@ class Person extends StrictObject implements Entity
     }
 
     /**
-     * Name is an enum, therefore de facto a constant, therefore only way how to change the name is to replace it
+     * Name is an enum, therefore a constant in fact, therefore only way how to change the name is to replace it
      *
      * @param Name $name
      *
@@ -211,11 +219,11 @@ class Person extends StrictObject implements Entity
     }
 
     /**
-     * @return Gender
+     * @return GenderCode
      */
-    public function getGender()
+    public function getGenderCode()
     {
-        return $this->gender;
+        return $this->genderCode;
     }
 
     /**
@@ -271,11 +279,11 @@ class Person extends StrictObject implements Entity
      */
     public function getSkills()
     {
-        return $this->personSkills;
+        return $this->skills;
     }
 
     /**
-     * Those are lazy loaded (and re-calculated on every entity reload when first time requested)
+     * Those are lazy loaded (and re-calculated on every entity reload at first time requested)
      *
      * @param Tables $tables
      * @return PropertiesByLevels
@@ -286,7 +294,7 @@ class Person extends StrictObject implements Entity
             /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
             $this->propertiesByLevels = new PropertiesByLevels( // enums aggregate
                 $this->getRace(),
-                $this->getGender(),
+                $this->getGenderCode(),
                 $this->getExceptionality()->getExceptionalityProperties(),
                 $this->getProfessionLevels(),
                 $this->weightInKgAdjustment,
@@ -300,11 +308,37 @@ class Person extends StrictObject implements Entity
     }
 
     /**
+     * @param Tables $tables
+     * @return CurrentProperties
+     * @throws \DrdPlus\CurrentProperties\Exceptions\CanNotUseArmamentBecauseOfMissingStrength
+     */
+    public function getCurrentProperties(Tables $tables)
+    {
+        return new CurrentProperties(
+            $this->getPropertiesByLevels($tables),
+            $this->getHealth(),
+            $this->getRace(),
+            $this->getEquipment()->getWornBodyArmor(),
+            $this->getEquipment()->getWornHelm(),
+            $this->getEquipment()->getWeight($tables->getWeightTable()),
+            $tables
+        );
+    }
+
+    /**
      * @return \DrdPlus\Professions\Profession
      */
     public function getProfession()
     {
         return $this->getProfessionLevels()->getFirstLevel()->getProfession();
+    }
+
+    /**
+     * @return Equipment
+     */
+    public function getEquipment()
+    {
+        return $this->equipment;
     }
 
 }

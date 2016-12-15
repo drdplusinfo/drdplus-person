@@ -1,21 +1,24 @@
 <?php
 namespace DrdPlus\Person\Attributes;
-use Doctrineum\String\StringEnum;
 
-/**
- * @method static Name getEnum(string $name)
- */
-class Name extends StringEnum
+use Granam\Scalar\Tools\ToString;
+use Granam\Strict\Object\StrictObject;
+use Granam\String\StringInterface;
+
+class Name extends StrictObject implements StringInterface
 {
+    /**
+     * @var string
+     */
+    private $value;
 
     /**
-     * @param string $name
-     *
-     * @return Name
+     * @param string|StringInterface $value
+     * @throws \Granam\Scalar\Tools\Exceptions\WrongParameterType
      */
-    public static function getIt($name)
+    public function __construct($value)
     {
-        return static::getEnum($name);
+        $this->value = trim(ToString::toString($value));
     }
 
     /**
@@ -25,4 +28,21 @@ class Name extends StringEnum
     {
         return $this->getValue() === '';
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getValue();
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
 }

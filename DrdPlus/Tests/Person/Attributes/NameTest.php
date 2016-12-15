@@ -11,14 +11,10 @@ class NameTest extends \PHPUnit_Framework_TestCase
      */
     public function I_can_create_it()
     {
-        $name = Name::getIt($value = 'foo');
+        $name = new Name($value = 'foo');
         self::assertInstanceOf(Name::class, $name);
-        self::assertSame($name, Name::getEnum($value));
         self::assertSame($value, $name->getValue());
-
-        $anotherName = Name::getIt($anotherValue = 'bar');
-        self::assertNotEquals($name, $anotherName); // different in value
-        self::assertSame($anotherValue, $anotherName->getValue());
+        self::assertSame($value, (string)$name);
     }
 
     /**
@@ -26,9 +22,9 @@ class NameTest extends \PHPUnit_Framework_TestCase
      */
     public function I_can_detect_if_is_empty()
     {
-        $emptyName = Name::getEnum('');
+        $emptyName = new Name('');
         self::assertTrue($emptyName->isEmpty());
-        $filledName = Name::getEnum('foo');
+        $filledName = new Name('foo');
         self::assertFalse($filledName->isEmpty());
     }
 }

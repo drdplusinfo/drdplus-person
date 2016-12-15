@@ -1,10 +1,16 @@
 <?php
 namespace DrdPlus\Tests\Person;
 
-use DrdPlus\Genders\Gender;
+use DrdPlus\Codes\Armaments\BodyArmorCode;
+use DrdPlus\Codes\Armaments\HelmCode;
+use DrdPlus\Codes\Armaments\MeleeWeaponCode;
+use DrdPlus\Codes\Armaments\RangedWeaponCode;
+use DrdPlus\Codes\GenderCode;
 use DrdPlus\Codes\ProfessionCode;
 use DrdPlus\Codes\RaceCode;
 use DrdPlus\Codes\SubRaceCode;
+use DrdPlus\CurrentProperties\CurrentProperties;
+use DrdPlus\Equipment\Equipment;
 use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Health\Health;
@@ -33,6 +39,8 @@ use DrdPlus\Races\Race;
 use DrdPlus\Skills\Skills;
 use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Measurements\Experiences\Experiences;
+use DrdPlus\Tables\Measurements\Weight\Weight;
+use DrdPlus\Tables\Measurements\Weight\WeightTable;
 use DrdPlus\Tables\Tables;
 use Granam\Tests\Tools\TestWithMockery;
 
@@ -44,25 +52,33 @@ class PersonTest extends TestWithMockery
      */
     public function I_can_use_it()
     {
+        $tables = new Tables();
         $person = new Person(
+            $name = $this->createName(),
             $race = $this->createRace(),
             $gender = $this->createGender(),
-            $name = $this->createName(),
             $exceptionality = $this->createExceptionality(),
             $memories = $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(),
             $background = $this->createBackground(),
             $personSkills = $this->createSkills(),
             $weightInKgAdjustment = $this->createWeightInKgAdjustment(),
-            $heightInCm = $this->createHeightInCm(),
+            $heightInCmAdjustment = $this->createHeightInCmAdjustment(),
             $age = $this->createAge(),
-            new Tables()
+            $equipment = $this->createEquipment(
+                BodyArmorCode::getIt(BodyArmorCode::HOBNAILED_ARMOR),
+                HelmCode::getIt(HelmCode::CONICAL_HELM),
+                RangedWeaponCode::getIt(RangedWeaponCode::JAVELIN),
+                MeleeWeaponCode::getIt(MeleeWeaponCode::HAND),
+                new Weight(1, Weight::KG, $tables->getWeightTable())
+            ),
+            $tables
         );
         self::assertNotNull($person);
         self::assertNull($person->getId());
 
         self::assertSame($race, $person->getRace());
-        self::assertSame($gender, $person->getGender());
+        self::assertSame($gender, $person->getGenderCode());
         self::assertSame($name, $person->getName());
         self::assertSame($exceptionality, $person->getExceptionality());
         self::assertSame($memories, $person->getMemories());
@@ -72,20 +88,43 @@ class PersonTest extends TestWithMockery
         self::assertSame($professionLevels, $person->getProfessionLevels());
         self::assertSame($background, $person->getBackground());
         self::assertSame($personSkills, $person->getSkills());
+        self::assertSame($equipment, $person->getEquipment());
         self::assertInstanceOf(
             PropertiesByLevels::class,
-            $propertiesByLevels = $person->getPropertiesByLevels(new Tables())
+            $propertiesByLevels = $person->getPropertiesByLevels($tables)
         );
         self::assertSame(
             $propertiesByLevels,
-            $propertiesByLevels = $person->getPropertiesByLevels(new Tables()),
+            $propertiesByLevels = $person->getPropertiesByLevels($tables),
             'Same instance of person properties expected'
         );
         // note: tables are for inner purpose only, does not have getter
         self::assertSame($weightInKgAdjustment, $propertiesByLevels->getWeightInKgAdjustment());
         self::assertSame($professionLevels->getFirstLevel()->getProfession(), $person->getProfession());
-        self::assertSame($heightInCm, $propertiesByLevels->getHeightInCm());
+        self::assertSame($heightInCmAdjustment, $propertiesByLevels->getHeightInCmAdjustment());
         self::assertSame($age, $propertiesByLevels->getAge());
+        self::assertInstanceOf(
+            CurrentProperties::class,
+            $currentProperties = $person->getCurrentProperties($tables)
+        );
+        $currentPropertiesReflection = new \ReflectionClass(CurrentProperties::class);
+        $valuesFromCurrentProperties = [];
+        foreach ($currentPropertiesReflection->getProperties() as $property) {
+            $property->setAccessible(true);
+            $valuesFromCurrentProperties[] = $property->getValue($currentProperties);
+        }
+        self::assertNotEmpty($valuesFromCurrentProperties);
+        $expectedValuesInCurrentProperties = [
+            $propertiesByLevels,
+            $person->getHealth(),
+            $person->getRace(),
+            $equipment->getWornBodyArmor(),
+            $equipment->getWornHelm(),
+            $equipment->getWeight($tables->getWeightTable()),
+        ];
+        foreach ($expectedValuesInCurrentProperties as $expectedValueInCurrentProperties) {
+            self::assertContains($expectedValueInCurrentProperties, $valuesFromCurrentProperties);
+        }
     }
 
     /**
@@ -94,31 +133,32 @@ class PersonTest extends TestWithMockery
     public function I_can_change_name()
     {
         $person = new Person(
+            $oldName = $this->createName(),
             $this->createRace(),
             $this->createGender(),
-            $oldName = $this->createName(),
             $this->createExceptionality(),
             $this->createMemories(),
             $this->createProfessionLevels(),
             $this->createBackground(),
             $this->createSkills(),
             $this->createWeightInKgAdjustment(),
-            $this->createHeightInCm(),
+            $this->createHeightInCmAdjustment(),
             $this->createAge(),
+            $this->createEquipment(),
             new Tables()
         );
         self::assertSame($oldName, $person->getName());
         NameType::registerSelf();
-        $name = Name::getEnum($nameString = 'foo');
+        $name = new Name($nameString = 'foo');
         self::assertNotSame($oldName, $name);
         $person->setName($name);
         self::assertSame($name, $person->getName());
-        $person->setName($newName = Name::getEnum($newNameString = 'bar'));
+        $person->setName($newName = new Name($newNameString = 'bar'));
         self::assertSame($newName, $person->getName());
     }
 
     /**
-     * @return Race
+     * @return Race|\Mockery\MockInterface
      */
     private function createRace()
     {
@@ -145,6 +185,8 @@ class PersonTest extends TestWithMockery
             ->andReturn(0);
         $race->shouldReceive('getWeightInKg')
             ->andReturn(0);
+        $race->shouldReceive('getHeightInCm')
+            ->andReturn(0);
         $race->shouldReceive('getSize')
             ->andReturn(0);
         $race->shouldReceive('getRaceCode')
@@ -158,15 +200,15 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @return Gender
+     * @return GenderCode|\Mockery\MockInterface
      */
     private function createGender()
     {
-        return $this->mockery(Gender::class);
+        return $this->mockery(GenderCode::class);
     }
 
     /**
-     * @return Exceptionality
+     * @return Exceptionality|\Mockery\MockInterface
      */
     private function createExceptionality()
     {
@@ -206,7 +248,7 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @return Memories
+     * @return Memories|\Mockery\MockInterface
      */
     private function createMemories()
     {
@@ -222,7 +264,7 @@ class PersonTest extends TestWithMockery
     /**
      * @param int $highestLevelRankValue = 1
      * @param string $professionCode
-     * @return ProfessionLevels
+     * @return ProfessionLevels|\Mockery\MockInterface
      */
     private function createProfessionLevels($highestLevelRankValue = 1, $professionCode = ProfessionCode::FIGHTER)
     {
@@ -309,7 +351,7 @@ class PersonTest extends TestWithMockery
      * @param float $value
      * @return \Mockery\MockInterface|HeightInCm
      */
-    private function createHeightInCm($value = 180.0)
+    private function createHeightInCmAdjustment($value = 180.0)
     {
         $heightInCm = $this->mockery(HeightInCm::class);
         $heightInCm->shouldReceive('getValue')
@@ -335,23 +377,60 @@ class PersonTest extends TestWithMockery
     }
 
     /**
+     * @param $armor
+     * @param $helm
+     * @param $mainHandWeaponlike
+     * @param $offhandWeaponlike
+     * @param $weight
+     * @return \Mockery\MockInterface|Equipment
+     */
+    private function createEquipment($armor = null, $helm = null, $mainHandWeaponlike = null, $offhandWeaponlike = null, $weight = null)
+    {
+        $equipment = $this->mockery(Equipment::class);
+        if ($armor !== null) {
+            $equipment->shouldReceive('getWornBodyArmor')
+                ->andReturn($armor);
+        }
+        if ($helm !== null) {
+            $equipment->shouldReceive('getWornHelm')
+                ->andReturn($helm);
+        }
+        if ($mainHandWeaponlike !== null) {
+            $equipment->shouldReceive('getMainHandWeaponlike')
+                ->andReturn($mainHandWeaponlike);
+        }
+        if ($offhandWeaponlike !== null) {
+            $equipment->shouldReceive('getOffhandWeaponlike')
+                ->andReturn($offhandWeaponlike);
+        }
+        if ($weight !== null) {
+            $equipment->shouldReceive('getWeight')
+                ->with($this->type(WeightTable::class))
+                ->andReturn($weight);
+        }
+
+        return $equipment;
+    }
+
+    /**
      * @test
      * @expectedException \DrdPlus\Person\Exceptions\InsufficientExperiences
      */
     public function I_can_not_create_person_with_insufficient_experiences()
     {
         new Person(
+            $this->createName(),
             $this->createRace(),
             $this->createGender(),
-            $this->createName(),
             $this->createExceptionality(),
             $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(2 /* highest level rank */),
             $this->createBackground(),
             $this->createSkills(),
             $this->createWeightInKgAdjustment(),
-            $this->createHeightInCm(),
+            $this->createHeightInCmAdjustment(),
             $this->createAge(),
+            $this->createEquipment(),
             new Tables()
         );
     }

@@ -1,7 +1,8 @@
 <?php
 namespace DrdPlus\Person\EnumTypes;
 
-use DrdPlus\Genders\EnumTypes\GendersEnumRegistrar;
+use DrdPlus\Codes\EnumTypes\GenderCodeType;
+use DrdPlus\Equipment\EnumTypes\EquipmentEnumsRegistrar;
 use DrdPlus\Exceptionalities\EnumTypes\ExceptionalitiesEnumRegistrar;
 use DrdPlus\GamingSession\EnumTypes\GamingSessionEnumRegistrar;
 use DrdPlus\Health\EnumTypes\HealthEnumsRegistrar;
@@ -18,7 +19,7 @@ class PersonEnumsRegistrar
     public static function registerAll()
     {
         RacesEnumRegistrar::registerAll();
-        GendersEnumRegistrar::registerAll();
+        GenderCodeType::registerSelf();
         PropertiesEnumRegistrar::registerAll();
         PersonBackgroundEnumRegistrar::registerAll();
         GamingSessionEnumRegistrar::registerAll();
@@ -27,6 +28,7 @@ class PersonEnumsRegistrar
         ExceptionalitiesEnumRegistrar::registerAll();
         StaminaEnumsRegistrar::registerAll();
         HealthEnumsRegistrar::registerAll();
+        EquipmentEnumsRegistrar::registerAll();
         NameType::registerSelf();
     }
 }
