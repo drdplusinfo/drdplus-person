@@ -14,7 +14,12 @@ matrix:
 before_script:
   - if [[ $TRAVIS_PHP_VERSION =~ ^[0-9]+[.][0-9]+$ ]]; then phpenv config-rm xdebug.ini; fi
   - composer self-update
+  - COMPOSER_ROOT_VERSION=dev-master composer require --dev codeclimate/php-test-reporter:dev-master
   - composer update --no-interaction --prefer-dist
 
 script:
-  - ./vendor/phpunit/phpunit/phpunit -v
+  - ./vendor/phpunit/phpunit/phpunit -v --coverage-clover build/logs/clover.xml
+
+addons:
+    code_climate:
+        repo_token: 1a2df39d3b18962b9a0987671d272b1afc16647c4797ced512d176d162048e62
