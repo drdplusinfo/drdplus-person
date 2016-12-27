@@ -29,7 +29,7 @@
     "drd-plus/equipment": "dev-master"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.4",
+    "phpunit/phpunit": ">=4.4",
     "mockery/mockery": "dev-master"
   },
   "minimum-stability": "dev",
