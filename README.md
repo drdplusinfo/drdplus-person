@@ -1,4 +1,4 @@
-# Person as a humanoid entity for DrD+
+# Person as a humanoid entity for [DrD+](http://www.altar.cz/drdplus/)
 
 Aggregates all parameters and attributes of a single hero or a foe.
 
