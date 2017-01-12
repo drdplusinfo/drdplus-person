@@ -8,10 +8,10 @@ use DrdPlus\CurrentProperties\CurrentProperties;
 use DrdPlus\Equipment\Equipment;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
-use DrdPlus\Exceptionalities\Exceptionality;
 use DrdPlus\Person\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
+use DrdPlus\PropertiesByFate\PropertiesByFate;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
@@ -50,10 +50,10 @@ class Person extends StrictObject implements Entity
      */
     private $genderCode;
     /**
-     * @var Exceptionality
-     * @ORM\OneToOne(targetEntity="DrdPlus\Exceptionalities\Exceptionality", cascade={"persist"})
+     * @var PropertiesByFate
+     * @ORM\OneToOne(targetEntity="DrdPlus\PropertiesByFate\PropertiesByFate", cascade={"persist"})
      */
-    private $exceptionality;
+    private $propertiesByFate;
     /**
      * @var PropertiesByLevels
      * Does not need Doctrine annotation - it is just an on-demand built container
@@ -114,7 +114,7 @@ class Person extends StrictObject implements Entity
      * @param Race $race
      * @param GenderCode $genderCode
      * @param Name $name
-     * @param Exceptionality $exceptionality
+     * @param PropertiesByFate $propertiesByFate
      * @param Memories $memories
      * @param ProfessionLevels $professionLevels
      * @param Background $background
@@ -129,7 +129,7 @@ class Person extends StrictObject implements Entity
         Name $name, // value
         Race $race, // enum (value)
         GenderCode $genderCode, // enum (value)
-        Exceptionality $exceptionality, // entity
+        PropertiesByFate $propertiesByFate, // entity
         Memories $memories, // entity
         ProfessionLevels $professionLevels, // entity
         Background $background, // entity
@@ -144,7 +144,7 @@ class Person extends StrictObject implements Entity
         $this->name = $name;
         $this->race = $race;
         $this->genderCode = $genderCode;
-        $this->exceptionality = $exceptionality;
+        $this->propertiesByFate = $propertiesByFate;
         $this->checkLevelsAgainstExperiences(
             $professionLevels,
             $memories,
@@ -227,11 +227,11 @@ class Person extends StrictObject implements Entity
     }
 
     /**
-     * @return Exceptionality
+     * @return PropertiesByFate
      */
-    public function getExceptionality()
+    public function getPropertiesByFate()
     {
-        return $this->exceptionality;
+        return $this->propertiesByFate;
     }
 
     /**
@@ -295,7 +295,7 @@ class Person extends StrictObject implements Entity
             $this->propertiesByLevels = new PropertiesByLevels( // enums aggregate
                 $this->getRace(),
                 $this->getGenderCode(),
-                $this->getExceptionality()->getExceptionalityProperties(),
+                $this->getPropertiesByFate(),
                 $this->getProfessionLevels(),
                 $this->weightInKgAdjustment,
                 $this->heightInCm,

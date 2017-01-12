@@ -13,7 +13,7 @@
     "roave/security-advisories": "dev-master",
     "doctrine/orm": "*",
     "granam/strict-object": "dev-master",
-    "drd-plus/exceptionalities": "dev-master",
+    "drd-plus/properties-by-fate": "dev-master",
     "drd-plus/profession-levels": "dev-master",
     "drd-plus/properties": "dev-master",
     "drd-plus/races": "dev-master",

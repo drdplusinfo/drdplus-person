@@ -11,8 +11,6 @@ use DrdPlus\Codes\RaceCode;
 use DrdPlus\Codes\SubRaceCode;
 use DrdPlus\CurrentProperties\CurrentProperties;
 use DrdPlus\Equipment\Equipment;
-use DrdPlus\Exceptionalities\Exceptionality;
-use DrdPlus\Exceptionalities\Properties\ExceptionalityProperties;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Attributes\Name;
@@ -34,6 +32,7 @@ use DrdPlus\Properties\Base\Will;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\WeightInKg;
+use DrdPlus\PropertiesByFate\PropertiesByFate;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Races\Race;
 use DrdPlus\Skills\Skills;
@@ -57,7 +56,7 @@ class PersonTest extends TestWithMockery
             $name = $this->createName(),
             $race = $this->createRace(),
             $gender = $this->createGender(),
-            $exceptionality = $this->createExceptionality(),
+            $propertiesByFate = $this->createPropertiesByFate(),
             $memories = $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(),
             $background = $this->createBackground(),
@@ -80,7 +79,7 @@ class PersonTest extends TestWithMockery
         self::assertSame($race, $person->getRace());
         self::assertSame($gender, $person->getGenderCode());
         self::assertSame($name, $person->getName());
-        self::assertSame($exceptionality, $person->getExceptionality());
+        self::assertSame($propertiesByFate, $person->getPropertiesByFate());
         self::assertSame($memories, $person->getMemories());
         self::assertInstanceOf(Health::class, $person->getHealth());
         self::assertInstanceOf(Stamina::class, $person->getStamina());
@@ -136,7 +135,7 @@ class PersonTest extends TestWithMockery
             $oldName = $this->createName(),
             $this->createRace(),
             $this->createGender(),
-            $this->createExceptionality(),
+            $this->createPropertiesByFate(),
             $this->createMemories(),
             $this->createProfessionLevels(),
             $this->createBackground(),
@@ -208,43 +207,41 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @return Exceptionality|\Mockery\MockInterface
+     * @return PropertiesByFate|\Mockery\MockInterface
      */
-    private function createExceptionality()
+    private function createPropertiesByFate()
     {
-        $exceptionality = $this->mockery(Exceptionality::class);
-        $exceptionality->shouldReceive('getExceptionalityProperties')
-            ->andReturn($exceptionalityProperties = $this->mockery(ExceptionalityProperties::class));
-        $exceptionalityProperties->shouldReceive('getProperty')
+        $propertiesByFate = $this->mockery(PropertiesByFate::class);
+        $propertiesByFate->shouldReceive('getProperty')
             ->andReturn($property = $this->mockery(BaseProperty::class));
         $property->shouldReceive('getValue')
             ->andReturn(0);
-        $exceptionalityProperties->shouldReceive('getStrength')
+        $propertiesByFate->shouldReceive('getStrength')
             ->andReturn($strength = $this->mockery(Strength::class));
         $strength->shouldReceive('getValue')
             ->andReturn(0);
-        $exceptionalityProperties->shouldReceive('getAgility')
+        $propertiesByFate->shouldReceive('getAgility')
             ->andReturn($agility = $this->mockery(Agility::class));
         $agility->shouldReceive('getValue')
             ->andReturn(0);
-        $exceptionalityProperties->shouldReceive('getKnack')
+        $propertiesByFate->shouldReceive('getKnack')
             ->andReturn($knack = $this->mockery(Knack::class));
         $knack->shouldReceive('getValue')
             ->andReturn(0);
-        $exceptionalityProperties->shouldReceive('getWill')
+        $propertiesByFate->shouldReceive('getWill')
             ->andReturn($will = $this->mockery(Will::class));
         $will->shouldReceive('getValue')
             ->andReturn(0);
-        $exceptionalityProperties->shouldReceive('getIntelligence')
+        $propertiesByFate->shouldReceive('getIntelligence')
             ->andReturn($intelligence = $this->mockery(Intelligence::class));
         $intelligence->shouldReceive('getValue')
             ->andReturn(0);
-        $exceptionalityProperties->shouldReceive('getCharisma')
+        $propertiesByFate->shouldReceive('getCharisma')
             ->andReturn($charisma = $this->mockery(Charisma::class));
         $charisma->shouldReceive('getValue')
             ->andReturn(0);
 
-        return $exceptionality;
+        return $propertiesByFate;
     }
 
     /**
@@ -422,7 +419,7 @@ class PersonTest extends TestWithMockery
             $this->createName(),
             $this->createRace(),
             $this->createGender(),
-            $this->createExceptionality(),
+            $this->createPropertiesByFate(),
             $this->createMemories(),
             $professionLevels = $this->createProfessionLevels(2 /* highest level rank */),
             $this->createBackground(),
