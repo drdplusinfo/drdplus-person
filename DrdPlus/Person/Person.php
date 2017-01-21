@@ -8,7 +8,7 @@ use DrdPlus\CurrentProperties\CurrentProperties;
 use DrdPlus\Equipment\Equipment;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
-use DrdPlus\Person\Background\Background;
+use DrdPlus\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\PropertiesByFate\PropertiesByFate;
@@ -81,7 +81,7 @@ class Person extends StrictObject implements Entity
     private $stamina;
     /**
      * @var Background
-     * @ORM\OneToOne(targetEntity="DrdPlus\Person\Background\Background", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="DrdPlus\Background\Background", cascade={"persist"})
      */
     private $background;
     /**

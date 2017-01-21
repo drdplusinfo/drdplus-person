@@ -2,17 +2,17 @@
 namespace DrdPlus\Tests\Person;
 
 use Doctrineum\Tests\Entity\AbstractDoctrineEntitiesTest;
+use DrdPlus\Background\Background;
 use DrdPlus\Codes\Armaments\BodyArmorCode;
 use DrdPlus\Codes\Armaments\HelmCode;
 use DrdPlus\Codes\Armaments\MeleeWeaponCode;
 use DrdPlus\Codes\Armaments\ShieldCode;
-use DrdPlus\Codes\FateCode;
 use DrdPlus\Codes\GenderCode;
+use DrdPlus\Codes\History\FateCode;
 use DrdPlus\Equipment\Belongings;
 use DrdPlus\Equipment\Equipment;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\Name;
-use DrdPlus\Person\Background\Background;
 use DrdPlus\Person\EnumTypes\PersonEnumsRegistrar;
 use DrdPlus\GamingSession\Adventure;
 use DrdPlus\GamingSession\GamingSession;
@@ -45,13 +45,14 @@ use DrdPlus\Properties\Body\WeightInKg;
 use DrdPlus\Races\Humans\CommonHuman;
 use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
+use DrdPlus\Tests\Background\BackgroundDoctrineEntitiesTest;
 use DrdPlus\Tests\Equipment\EquipmentDoctrineEntitiesTest;
 use DrdPlus\Tests\Health\HealthDoctrineEntitiesTest;
-use DrdPlus\Tests\Person\Background\PersonBackgroundDoctrineEntitiesTest;
 use DrdPlus\Tests\Person\ProfessionLevels\ProfessionLevelsDoctrineEntitiesTest;
 use DrdPlus\Tests\PropertiesByFate\PropertiesByFateDoctrineEntitiesTest;
 use DrdPlus\Tests\Skills\SkillsDoctrineEntitiesTest;
 use DrdPlus\Tests\Stamina\StaminaDoctrineEntitiesTest;
+use Granam\Integer\PositiveIntegerObject;
 
 class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
@@ -90,7 +91,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 
     protected function createEntitiesToPersist()
     {
-        $tables = new Tables();
+        $tables = Tables::getIt();
 
         return array_merge(
             (new SkillsDoctrineEntitiesTest())->createEntitiesToPersist(),
@@ -100,7 +101,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             [
                 $this->createPersonEntity($tables),
                 SkillsDoctrineEntitiesTest::createSkillsEntity($tables),
-                PersonBackgroundDoctrineEntitiesTest::createBackgroundEntity(),
+                BackgroundDoctrineEntitiesTest::createBackgroundEntity(),
                 new Memories(),
                 new Adventure(new Memories(), 'foo'),
                 new GamingSession(
@@ -133,17 +134,23 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 Charisma::getIt(0),
                 FateCode::getIt(FateCode::GOOD_BACKGROUND),
                 Fighter::getIt(),
-                $tables->getPlayerDecisionsTable()
+                $tables
             ),
             new Memories(),
             $professionLevels = new ProfessionLevels(
                 ProfessionZeroLevel::createZeroLevel(Commoner::getIt()),
                 ProfessionFirstLevel::createFirstLevel(Wizard::getIt())
             ),
-            $background = Background::createIt(FateCode::getIt(FateCode::GOOD_BACKGROUND), $tables->getBackgroundPointsTable(), 4, 3, 5),
+            $background = Background::createIt(
+                FateCode::getIt(FateCode::GOOD_BACKGROUND),
+                new PositiveIntegerObject(4),
+                new PositiveIntegerObject(3),
+                new PositiveIntegerObject(5),
+                $tables
+            ),
             Skills::createSkills(
                 $professionLevels,
-                $background->getBackgroundSkillPoints(),
+                $background->getSkillsFromBackground(),
                 new PhysicalSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
                 new PsychicalSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
                 new CombinedSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),

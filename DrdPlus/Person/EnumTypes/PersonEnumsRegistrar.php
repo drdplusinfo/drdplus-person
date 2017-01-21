@@ -6,7 +6,7 @@ use DrdPlus\Equipment\EnumTypes\EquipmentEnumsRegistrar;
 use DrdPlus\GamingSession\EnumTypes\GamingSessionEnumRegistrar;
 use DrdPlus\Health\EnumTypes\HealthEnumsRegistrar;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
-use DrdPlus\Person\Background\EnumTypes\PersonBackgroundEnumRegistrar;
+use DrdPlus\Background\EnumTypes\BackgroundEnumRegistrar;
 use DrdPlus\Person\ProfessionLevels\EnumTypes\ProfessionLevelsEnumRegistrar;
 use DrdPlus\Professions\EnumTypes\ProfessionsEnumRegistrar;
 use DrdPlus\Properties\EnumTypes\PropertiesEnumRegistrar;
@@ -21,7 +21,7 @@ class PersonEnumsRegistrar
         RacesEnumRegistrar::registerAll();
         GenderCodeType::registerSelf();
         PropertiesEnumRegistrar::registerAll();
-        PersonBackgroundEnumRegistrar::registerAll();
+        BackgroundEnumRegistrar::registerAll();
         GamingSessionEnumRegistrar::registerAll();
         ProfessionsEnumRegistrar::registerAll();
         ProfessionLevelsEnumRegistrar::registerAll();

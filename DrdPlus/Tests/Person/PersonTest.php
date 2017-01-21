@@ -1,6 +1,7 @@
 <?php
 namespace DrdPlus\Tests\Person;
 
+use DrdPlus\Background\BackgroundParts\SkillsFromBackground;
 use DrdPlus\Codes\Armaments\BodyArmorCode;
 use DrdPlus\Codes\Armaments\HelmCode;
 use DrdPlus\Codes\Armaments\MeleeWeaponCode;
@@ -14,8 +15,7 @@ use DrdPlus\Equipment\Equipment;
 use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Attributes\Name;
-use DrdPlus\Person\Background\Background;
-use DrdPlus\Person\Background\BackgroundParts\BackgroundSkillPoints;
+use DrdPlus\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\LevelRank;
@@ -51,7 +51,7 @@ class PersonTest extends TestWithMockery
      */
     public function I_can_use_it()
     {
-        $tables = new Tables();
+        $tables = Tables::getIt();
         $person = new Person(
             $name = $this->createName(),
             $race = $this->createRace(),
@@ -144,7 +144,7 @@ class PersonTest extends TestWithMockery
             $this->createHeightInCmAdjustment(),
             $this->createAge(),
             $this->createEquipment(),
-            new Tables()
+            Tables::getIt()
         );
         self::assertSame($oldName, $person->getName());
         NameType::registerSelf();
@@ -272,6 +272,8 @@ class PersonTest extends TestWithMockery
         $firstLevel->shouldReceive('getProfession')->andReturn($profession = $this->mockery(Profession::class));
         $profession->shouldReceive('getValue')
             ->andReturn($professionCode);
+        $profession->shouldReceive('getCode')
+            ->andReturn(ProfessionCode::getIt($professionCode));
 
         $professionLevels->shouldReceive('getFirstLevelPropertyModifier')
             ->andReturn(0);
@@ -317,8 +319,8 @@ class PersonTest extends TestWithMockery
     private function createBackground()
     {
         $background = $this->mockery(Background::class);
-        $background->shouldReceive('getBackgroundSkillPoints')
-            ->andReturn($backgroundSkills = $this->mockery(BackgroundSkillPoints::class));
+        $background->shouldReceive('getSkillsFromBackground')
+            ->andReturn($backgroundSkills = $this->mockery(SkillsFromBackground::class));
 
         return $background;
     }
@@ -428,7 +430,7 @@ class PersonTest extends TestWithMockery
             $this->createHeightInCmAdjustment(),
             $this->createAge(),
             $this->createEquipment(),
-            new Tables()
+            Tables::getIt()
         );
     }
 
