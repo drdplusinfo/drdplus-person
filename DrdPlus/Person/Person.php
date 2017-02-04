@@ -124,6 +124,7 @@ class Person extends StrictObject implements Entity
      * @param Age $age
      * @param Equipment $equipment
      * @param Tables $tables
+     * @throws \DrdPlus\Person\Exceptions\InsufficientExperiences
      */
     public function __construct(
         Name $name, // value
@@ -162,6 +163,12 @@ class Person extends StrictObject implements Entity
         $this->stamina = new Stamina();
     }
 
+    /**
+     * @param ProfessionLevels $professionLevels
+     * @param Memories $memories
+     * @param ExperiencesTable $experiencesTable
+     * @throws \DrdPlus\Person\Exceptions\InsufficientExperiences
+     */
     private function checkLevelsAgainstExperiences(
         ProfessionLevels $professionLevels,
         Memories $memories,
