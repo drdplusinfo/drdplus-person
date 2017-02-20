@@ -2,8 +2,9 @@
 namespace DrdPlus\Tests\Person\Attributes;
 
 use DrdPlus\Person\Attributes\Name;
+use PHPUnit\Framework\TestCase;
 
-class NameTest extends \PHPUnit_Framework_TestCase
+class NameTest extends TestCase
 {
 
     /**
