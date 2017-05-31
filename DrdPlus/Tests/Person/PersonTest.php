@@ -319,7 +319,7 @@ class PersonTest extends TestWithMockery
     private function createBackground()
     {
         $background = $this->mockery(Background::class);
-        $background->shouldReceive('getSkillsFromBackground')
+        $background->shouldReceive('getSkillPointsFromBackground')
             ->andReturn($backgroundSkills = $this->mockery(SkillPointsFromBackground::class));
 
         return $background;

@@ -150,7 +150,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             ),
             Skills::createSkills(
                 $professionLevels,
-                $background->getSkillsFromBackground(),
+                $background->getSkillPointsFromBackground(),
                 new PhysicalSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
                 new PsychicalSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
                 new CombinedSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
