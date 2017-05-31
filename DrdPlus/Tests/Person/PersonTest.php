@@ -1,7 +1,7 @@
 <?php
 namespace DrdPlus\Tests\Person;
 
-use DrdPlus\Background\BackgroundParts\SkillsFromBackground;
+use DrdPlus\Background\BackgroundParts\SkillPointsFromBackground;
 use DrdPlus\Codes\Armaments\BodyArmorCode;
 use DrdPlus\Codes\Armaments\HelmCode;
 use DrdPlus\Codes\Armaments\MeleeWeaponCode;
@@ -320,7 +320,7 @@ class PersonTest extends TestWithMockery
     {
         $background = $this->mockery(Background::class);
         $background->shouldReceive('getSkillsFromBackground')
-            ->andReturn($backgroundSkills = $this->mockery(SkillsFromBackground::class));
+            ->andReturn($backgroundSkills = $this->mockery(SkillPointsFromBackground::class));
 
         return $background;
     }
