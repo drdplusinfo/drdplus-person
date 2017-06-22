@@ -19,6 +19,7 @@ use DrdPlus\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\Person;
 use DrdPlus\Person\ProfessionLevels\LevelRank;
+use DrdPlus\Person\ProfessionLevels\ProfessionFirstLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Professions\Profession;
@@ -268,7 +269,7 @@ class PersonTest extends TestWithMockery
         $professionLevels = $this->mockery(ProfessionLevels::class);
 
         $professionLevels->shouldReceive('getFirstLevel')
-            ->andReturn($firstLevel = $this->mockery(ProfessionLevel::class));
+            ->andReturn($firstLevel = $this->mockery(ProfessionFirstLevel::class));
         $firstLevel->shouldReceive('getProfession')->andReturn($profession = $this->mockery(Profession::class));
         $profession->shouldReceive('getValue')
             ->andReturn($professionCode);
