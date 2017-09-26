@@ -11,11 +11,12 @@ use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Background\Background;
 use DrdPlus\GamingSession\Memories;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
+use DrdPlus\Professions\Profession;
 use DrdPlus\PropertiesByFate\PropertiesByFate;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
-use DrdPlus\Properties\Body\WeightInKg;
+use DrdPlus\Properties\Body\BodyWeightInKg;
 use DrdPlus\Races\Race;
 use DrdPlus\Skills\Skills;
 use DrdPlus\Stamina\Stamina;
@@ -90,10 +91,10 @@ class Person extends StrictObject implements Entity
      */
     private $skills;
     /**
-     * @var WeightInKg
-     * @ORM\Column(type="weight_in_kg")
+     * @var BodyWeightInKg
+     * @ORM\Column(type="body_weight_in_kg")
      */
-    private $weightInKgAdjustment;
+    private $bodyWeightInKgAdjustment;
     /**
      * @var HeightInCm
      * @ORM\Column(type="height_in_cm")
@@ -119,7 +120,7 @@ class Person extends StrictObject implements Entity
      * @param ProfessionLevels $professionLevels
      * @param Background $background
      * @param Skills $skills
-     * @param WeightInKg $weightInKgAdjustment
+     * @param BodyWeightInKg $weightInKgAdjustment
      * @param HeightInCm $heightInCm
      * @param Age $age
      * @param Equipment $equipment
@@ -135,7 +136,7 @@ class Person extends StrictObject implements Entity
         ProfessionLevels $professionLevels, // entity
         Background $background, // entity
         Skills $skills, // entity
-        WeightInKg $weightInKgAdjustment, // enum (value)
+        BodyWeightInKg $weightInKgAdjustment, // enum (value)
         HeightInCm $heightInCm, // enum (value)
         Age $age, // enum (value)
         Equipment $equipment, // entity
@@ -155,7 +156,7 @@ class Person extends StrictObject implements Entity
         $this->professionLevels = $professionLevels;
         $this->background = $background;
         $this->skills = $skills;
-        $this->weightInKgAdjustment = $weightInKgAdjustment;
+        $this->bodyWeightInKgAdjustment = $weightInKgAdjustment;
         $this->heightInCm = $heightInCm;
         $this->age = $age;
         $this->equipment = $equipment;
@@ -187,10 +188,7 @@ class Person extends StrictObject implements Entity
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId():? int
     {
         return $this->id;
     }
@@ -199,10 +197,9 @@ class Person extends StrictObject implements Entity
      * Name is an enum, therefore a constant in fact, therefore only way how to change the name is to replace it
      *
      * @param Name $name
-     *
      * @return $this
      */
-    public function setName(Name $name)
+    public function setName(Name $name): Person
     {
         $this->name = $name;
 
@@ -212,7 +209,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Name
      */
-    public function getName()
+    public function getName(): Name
     {
         return $this->name;
     }
@@ -220,7 +217,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Race
      */
-    public function getRace()
+    public function getRace(): Race
     {
         return $this->race;
     }
@@ -228,7 +225,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return GenderCode
      */
-    public function getGenderCode()
+    public function getGenderCode(): GenderCode
     {
         return $this->genderCode;
     }
@@ -236,7 +233,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return PropertiesByFate
      */
-    public function getPropertiesByFate()
+    public function getPropertiesByFate(): PropertiesByFate
     {
         return $this->propertiesByFate;
     }
@@ -244,7 +241,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Memories
      */
-    public function getMemories()
+    public function getMemories(): Memories
     {
         return $this->memories;
     }
@@ -252,7 +249,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Health
      */
-    public function getHealth()
+    public function getHealth(): Health
     {
         return $this->health;
     }
@@ -260,7 +257,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Stamina
      */
-    public function getStamina()
+    public function getStamina(): Stamina
     {
         return $this->stamina;
     }
@@ -268,7 +265,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return ProfessionLevels
      */
-    public function getProfessionLevels()
+    public function getProfessionLevels(): ProfessionLevels
     {
         return $this->professionLevels;
     }
@@ -276,7 +273,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Background
      */
-    public function getBackground()
+    public function getBackground(): Background
     {
         return $this->background;
     }
@@ -284,7 +281,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Skills
      */
-    public function getSkills()
+    public function getSkills(): Skills
     {
         return $this->skills;
     }
@@ -295,7 +292,7 @@ class Person extends StrictObject implements Entity
      * @param Tables $tables
      * @return PropertiesByLevels
      */
-    public function getPropertiesByLevels(Tables $tables)
+    public function getPropertiesByLevels(Tables $tables): PropertiesByLevels
     {
         if ($this->propertiesByLevels === null) {
             /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
@@ -304,7 +301,7 @@ class Person extends StrictObject implements Entity
                 $this->getGenderCode(),
                 $this->getPropertiesByFate(),
                 $this->getProfessionLevels(),
-                $this->weightInKgAdjustment,
+                $this->bodyWeightInKgAdjustment,
                 $this->heightInCm,
                 $this->age,
                 $tables
@@ -335,7 +332,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return \DrdPlus\Professions\Profession
      */
-    public function getProfession()
+    public function getProfession(): Profession
     {
         return $this->getProfessionLevels()->getFirstLevel()->getProfession();
     }
@@ -343,7 +340,7 @@ class Person extends StrictObject implements Entity
     /**
      * @return Equipment
      */
-    public function getEquipment()
+    public function getEquipment(): Equipment
     {
         return $this->equipment;
     }

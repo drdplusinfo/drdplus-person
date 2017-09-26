@@ -32,7 +32,7 @@ use DrdPlus\Properties\Base\Strength;
 use DrdPlus\Properties\Base\Will;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
-use DrdPlus\Properties\Body\WeightInKg;
+use DrdPlus\Properties\Body\BodyWeightInKg;
 use DrdPlus\PropertiesByFate\PropertiesByFate;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Races\Race;
@@ -336,11 +336,11 @@ class PersonTest extends TestWithMockery
 
     /**
      * @param float $value
-     * @return \Mockery\MockInterface|WeightInKg
+     * @return \Mockery\MockInterface|BodyWeightInKg
      */
     private function createWeightInKgAdjustment($value = 0.0)
     {
-        $weightInKg = $this->mockery(WeightInKg::class);
+        $weightInKg = $this->mockery(BodyWeightInKg::class);
         $weightInKg->shouldReceive('getValue')
             ->andReturn($value);
 

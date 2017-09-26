@@ -41,7 +41,7 @@ use DrdPlus\Skills\Psychical\PsychicalSkills;
 use DrdPlus\Professions\Fighter;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
-use DrdPlus\Properties\Body\WeightInKg;
+use DrdPlus\Properties\Body\BodyWeightInKg;
 use DrdPlus\Races\Humans\CommonHuman;
 use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Tables;
@@ -89,7 +89,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         return [Person::class];
     }
 
-    protected function createEntitiesToPersist()
+    protected function createEntitiesToPersist(): array
     {
         $tables = Tables::getIt();
 
@@ -119,7 +119,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         );
     }
 
-    private function createPersonEntity(Tables $tables)
+    private function createPersonEntity(Tables $tables): Person
     {
         return new Person(
             new Name('foo'),
@@ -156,7 +156,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
                 new CombinedSkills(ProfessionZeroLevel::createZeroLevel(Commoner::getIt())),
                 $tables
             ),
-            WeightInKg::getIt(123.45),
+            BodyWeightInKg::getIt(123.45),
             HeightInCm::getIt(78.89),
             Age::getIt(56),
             new Equipment(
