@@ -52,7 +52,7 @@ class Person extends StrictObject implements Entity
     private $genderCode;
     /**
      * @var PropertiesByFate
-     * @ORM\OneToOne(targetEntity="DrdPlus\PropertiesByFate\PropertiesByFate", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\DrdPlus\PropertiesByFate\PropertiesByFate", cascade={"persist"})
      */
     private $propertiesByFate;
     /**
@@ -62,7 +62,7 @@ class Person extends StrictObject implements Entity
     private $propertiesByLevels;
     /**
      * @var ProfessionLevels
-     * @ORM\OneToOne(targetEntity="DrdPlus\Person\ProfessionLevels\ProfessionLevels", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Person\ProfessionLevels\ProfessionLevels", cascade={"persist"})
      */
     private $professionLevels;
     /**
@@ -82,12 +82,12 @@ class Person extends StrictObject implements Entity
     private $stamina;
     /**
      * @var Background
-     * @ORM\OneToOne(targetEntity="DrdPlus\Background\Background", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Background\Background", cascade={"persist"})
      */
     private $background;
     /**
      * @var Skills
-     * @ORM\OneToOne(targetEntity="DrdPlus\Skills\Skills", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\DrdPlus\Skills\Skills", cascade={"persist"})
      */
     private $skills;
     /**
@@ -316,7 +316,7 @@ class Person extends StrictObject implements Entity
      * @return CurrentProperties
      * @throws \DrdPlus\CurrentProperties\Exceptions\CanNotUseArmamentBecauseOfMissingStrength
      */
-    public function getCurrentProperties(Tables $tables)
+    public function getCurrentProperties(Tables $tables): CurrentProperties
     {
         return new CurrentProperties(
             $this->getPropertiesByLevels($tables),

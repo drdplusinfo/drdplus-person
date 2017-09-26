@@ -99,7 +99,7 @@ class PersonTest extends TestWithMockery
             'Same instance of person properties expected'
         );
         // note: tables are for inner purpose only, does not have getter
-        self::assertSame($weightInKgAdjustment, $propertiesByLevels->getWeightInKgAdjustment());
+        self::assertSame($weightInKgAdjustment, $propertiesByLevels->getBodyWeightInKgAdjustment());
         self::assertSame($professionLevels->getFirstLevel()->getProfession(), $person->getProfession());
         self::assertSame($heightInCmAdjustment, $propertiesByLevels->getHeightInCmAdjustment());
         self::assertSame($age, $propertiesByLevels->getAge());

@@ -62,7 +62,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         parent::setUp();
     }
 
-    protected function getDirsWithEntities()
+    protected function getDirsWithEntities(): array
     {
         $classesInWantedDirs = [
             Person::class,
@@ -84,7 +84,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         );
     }
 
-    protected function getExpectedEntityClasses()
+    protected function getExpectedEntityClasses(): array
     {
         return [Person::class];
     }

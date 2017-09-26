@@ -16,7 +16,7 @@ use DrdPlus\Stamina\EnumTypes\StaminaEnumsRegistrar;
 
 class PersonEnumsRegistrar
 {
-    public static function registerAll()
+    public static function registerAll(): void
     {
         RacesEnumRegistrar::registerAll();
         GenderCodeType::registerSelf();
