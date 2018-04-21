@@ -62,6 +62,9 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
         parent::setUp();
     }
 
+    /**
+     * @return array
+     */
     protected function getDirsWithEntities(): array
     {
         $classesInWantedDirs = [
@@ -76,9 +79,9 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
             Equipment::class,
         ];
 
-        return array_map(
+        return \array_map(
             function ($className) {
-                return dirname((new \ReflectionClass($className))->getFileName());
+                return \dirname((new \ReflectionClass($className))->getFileName());
             },
             $classesInWantedDirs
         );

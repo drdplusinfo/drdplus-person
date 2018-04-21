@@ -16,6 +16,9 @@ use DrdPlus\Stamina\EnumTypes\StaminaEnumsRegistrar;
 
 class PersonEnumsRegistrar
 {
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public static function registerAll(): void
     {
         RacesEnumRegistrar::registerAll();
