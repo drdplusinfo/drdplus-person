@@ -1,41 +1,49 @@
 <?php
+declare(strict_types=1);
+
 namespace DrdPlus\Person\Attributes\EnumTypes;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrineum\Scalar\ScalarEnumInterface;
 use Doctrineum\SelfRegisteringType\AbstractSelfRegisteringType;
 use DrdPlus\Person\Attributes\Name;
+use Granam\Scalar\Tools\ToString;
+use Granam\String\StringInterface;
 
 class NameType extends AbstractSelfRegisteringType
 {
-    const MAX_LENGTH_IN_BYTES = 256;
+    public const MAX_LENGTH_IN_BYTES = 256;
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
         return 'VARCHAR(' . self::MAX_LENGTH_IN_BYTES . ')';
     }
 
-    const NAME = 'name';
+    public const NAME = 'name';
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
 
     /**+
-     * @param string $value
+     * @param null|string|StringInterface $value
      * @param AbstractPlatform $platform
-     * @return string
+     * @return string|null
      * @throws \DrdPlus\Person\Attributes\EnumTypes\Exceptions\NameIsTooLong
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        $value = parent::convertToDatabaseValue($value, $platform);
-        if (strlen($value) > self::MAX_LENGTH_IN_BYTES) {
+        if ($value === null) {
+            return null;
+        }
+        $value = ToString::toString($value);
+        if (\strlen($value) > self::MAX_LENGTH_IN_BYTES) {
             throw new Exceptions\NameIsTooLong(
-                'Name can not exceed ' . NameType::MAX_LENGTH_IN_BYTES . ' bytes, got ' . strlen($value)
+                'Name can not exceed ' . static::MAX_LENGTH_IN_BYTES . ' bytes, got ' . \strlen($value)
             );
         }
 
@@ -45,14 +53,13 @@ class NameType extends AbstractSelfRegisteringType
     /**
      * @param string|null $value
      * @param AbstractPlatform $platform
-     * @return Name|null
+     * @return ScalarEnumInterface|Name|null
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?ScalarEnumInterface
     {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         return $value === null
             ? null
-            : new Name($value);
+            : Name::getEnum($value);
     }
 
 }

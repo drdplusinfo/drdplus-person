@@ -1,18 +1,18 @@
 <?php
+declare(strict_types=1);
+
 namespace DrdPlus\Tests\Person;
 
+use DrdPlus\Armourer\Armourer;
 use DrdPlus\Background\BackgroundParts\SkillPointsFromBackground;
 use DrdPlus\Codes\Armaments\BodyArmorCode;
 use DrdPlus\Codes\Armaments\HelmCode;
-use DrdPlus\Codes\Armaments\MeleeWeaponCode;
-use DrdPlus\Codes\Armaments\RangedWeaponCode;
 use DrdPlus\Codes\GenderCode;
 use DrdPlus\Codes\ProfessionCode;
 use DrdPlus\Codes\RaceCode;
 use DrdPlus\Codes\SubRaceCode;
 use DrdPlus\CurrentProperties\CurrentProperties;
 use DrdPlus\Equipment\Equipment;
-use DrdPlus\Health\Health;
 use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Background\Background;
@@ -37,7 +37,6 @@ use DrdPlus\PropertiesByFate\PropertiesByFate;
 use DrdPlus\PropertiesByLevels\PropertiesByLevels;
 use DrdPlus\Races\Race;
 use DrdPlus\Skills\Skills;
-use DrdPlus\Stamina\Stamina;
 use DrdPlus\Tables\Measurements\Experiences\Experiences;
 use DrdPlus\Tables\Measurements\Weight\Weight;
 use DrdPlus\Tables\Measurements\Weight\WeightTable;
@@ -49,10 +48,12 @@ class PersonTest extends TestWithMockery
 
     /**
      * @test
+     * @throws \ReflectionException
      */
-    public function I_can_use_it()
+    public function I_can_use_it(): void
     {
         $tables = Tables::getIt();
+        $armourer = new Armourer($tables);
         $person = new Person(
             $name = $this->createName(),
             $race = $this->createRace(),
@@ -68,8 +69,6 @@ class PersonTest extends TestWithMockery
             $equipment = $this->createEquipment(
                 BodyArmorCode::getIt(BodyArmorCode::HOBNAILED_ARMOR),
                 HelmCode::getIt(HelmCode::CONICAL_HELM),
-                RangedWeaponCode::getIt(RangedWeaponCode::JAVELIN),
-                MeleeWeaponCode::getIt(MeleeWeaponCode::HAND),
                 new Weight(1, Weight::KG, $tables->getWeightTable())
             ),
             $tables
@@ -82,8 +81,6 @@ class PersonTest extends TestWithMockery
         self::assertSame($name, $person->getName());
         self::assertSame($propertiesByFate, $person->getPropertiesByFate());
         self::assertSame($memories, $person->getMemories());
-        self::assertInstanceOf(Health::class, $person->getHealth());
-        self::assertInstanceOf(Stamina::class, $person->getStamina());
         self::assertSame($memories, $person->getMemories());
         self::assertSame($professionLevels, $person->getProfessionLevels());
         self::assertSame($background, $person->getBackground());
@@ -105,7 +102,7 @@ class PersonTest extends TestWithMockery
         self::assertSame($age, $propertiesByLevels->getAge());
         self::assertInstanceOf(
             CurrentProperties::class,
-            $currentProperties = $person->getCurrentProperties($tables)
+            $currentProperties = $person->getCurrentProperties($tables, $armourer)
         );
         $currentPropertiesReflection = new \ReflectionClass(CurrentProperties::class);
         $valuesFromCurrentProperties = [];
@@ -129,8 +126,9 @@ class PersonTest extends TestWithMockery
 
     /**
      * @test
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function I_can_change_name()
+    public function I_can_change_name(): void
     {
         $person = new Person(
             $oldName = $this->createName(),
@@ -149,11 +147,11 @@ class PersonTest extends TestWithMockery
         );
         self::assertSame($oldName, $person->getName());
         NameType::registerSelf();
-        $name = new Name($nameString = 'foo');
+        $name = Name::getIt($nameString = 'foo');
         self::assertNotSame($oldName, $name);
         $person->setName($name);
         self::assertSame($name, $person->getName());
-        $person->setName($newName = new Name($newNameString = 'bar'));
+        $person->setName($newName = Name::getIt($newNameString = 'bar'));
         self::assertSame($newName, $person->getName());
     }
 
@@ -165,7 +163,7 @@ class PersonTest extends TestWithMockery
         $race = $this->mockery(Race::class);
         $race->shouldReceive('getProperty')
             ->andReturn(0);
-        $race->shouldReceive('getStrengthModifier')
+        /*$race->shouldReceive('getStrengthModifier')
             ->andReturn(0);
         $race->shouldReceive('getAgilityModifier')
             ->andReturn(0);
@@ -182,7 +180,7 @@ class PersonTest extends TestWithMockery
         $race->shouldReceive('getSizeModifier')
             ->andReturn(0);
         $race->shouldReceive('getSensesModifier')
-            ->andReturn(0);
+            ->andReturn(0);*/
         $race->shouldReceive('getWeightInKg')
             ->andReturn(0);
         $race->shouldReceive('getHeightInCm')
@@ -301,8 +299,8 @@ class PersonTest extends TestWithMockery
         $professionLevels->shouldReceive('getFirstLevelCharismaModifier')->andReturn(0);
         $professionLevels->shouldReceive('getNextLevelsCharismaModifier')->andReturn(0);
 
-        $professionLevels->shouldReceive('getWeightKgModifierForFirstLevel')->andReturn(0);
-        $professionLevels->shouldReceive('getNextLevelsWeightModifier')->andReturn(0);
+        // $professionLevels->shouldReceive('getWeightKgModifierForFirstLevel')->andReturn(0);
+        // $professionLevels->shouldReceive('getNextLevelsWeightModifier')->andReturn(0);
 
         $professionLevels->shouldReceive('getCurrentLevel')
             ->andReturn($currentLevel = $this->mockery(ProfessionLevel::class));
@@ -377,14 +375,12 @@ class PersonTest extends TestWithMockery
     }
 
     /**
-     * @param $armor
-     * @param $helm
-     * @param $mainHandWeaponlike
-     * @param $offhandWeaponlike
-     * @param $weight
+     * @param BodyArmorCode|null $armor
+     * @param HelmCode|null $helm
+     * @param Weight|null $weight
      * @return \Mockery\MockInterface|Equipment
      */
-    private function createEquipment($armor = null, $helm = null, $mainHandWeaponlike = null, $offhandWeaponlike = null, $weight = null)
+    private function createEquipment(BodyArmorCode $armor = null, HelmCode $helm = null, Weight $weight = null): Equipment
     {
         $equipment = $this->mockery(Equipment::class);
         if ($armor !== null) {
@@ -394,14 +390,6 @@ class PersonTest extends TestWithMockery
         if ($helm !== null) {
             $equipment->shouldReceive('getWornHelm')
                 ->andReturn($helm);
-        }
-        if ($mainHandWeaponlike !== null) {
-            $equipment->shouldReceive('getMainHandWeaponlike')
-                ->andReturn($mainHandWeaponlike);
-        }
-        if ($offhandWeaponlike !== null) {
-            $equipment->shouldReceive('getOffhandWeaponlike')
-                ->andReturn($offhandWeaponlike);
         }
         if ($weight !== null) {
             $equipment->shouldReceive('getWeight')
@@ -416,7 +404,7 @@ class PersonTest extends TestWithMockery
      * @test
      * @expectedException \DrdPlus\Person\Exceptions\InsufficientExperiences
      */
-    public function I_can_not_create_person_with_insufficient_experiences()
+    public function I_can_not_create_person_with_insufficient_experiences(): void
     {
         new Person(
             $this->createName(),

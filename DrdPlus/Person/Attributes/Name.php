@@ -1,30 +1,37 @@
 <?php
+declare(strict_types=1);
+
 namespace DrdPlus\Person\Attributes;
 
+use Doctrineum\Scalar\ScalarEnum;
+use Doctrineum\Scalar\ScalarEnumInterface;
 use Granam\Scalar\Tools\ToString;
-use Granam\Strict\Object\StrictObject;
 use Granam\String\StringInterface;
 
-class Name extends StrictObject implements StringInterface
+class Name extends ScalarEnum implements StringInterface
 {
     /**
-     * @var string
+     * @param string|StringInterface $enumValue
+     * @return Name|ScalarEnumInterface
      */
-    private $value;
+    public static function getIt($enumValue): Name
+    {
+        return static::getEnum($enumValue);
+    }
 
     /**
      * @param string|StringInterface $value
      * @throws \Granam\Scalar\Tools\Exceptions\WrongParameterType
      */
-    public function __construct($value)
+    protected function __construct($value)
     {
-        $this->value = trim(ToString::toString($value));
+        parent::__construct(\trim(ToString::toString($value)));
     }
 
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->getValue() === '';
     }
@@ -32,17 +39,9 @@ class Name extends StrictObject implements StringInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function getValue(): string
     {
-        return $this->getValue();
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
+        return parent::getValue();
     }
 
 }

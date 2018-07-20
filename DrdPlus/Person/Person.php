@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
+
 namespace DrdPlus\Person;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrineum\Entity\Entity;
+use DrdPlus\Armourer\Armourer;
 use DrdPlus\Codes\GenderCode;
 use DrdPlus\CurrentProperties\CurrentProperties;
 use DrdPlus\Equipment\Equipment;
@@ -188,7 +191,7 @@ class Person extends StrictObject implements Entity
         }
     }
 
-    public function getId():? int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -295,7 +298,6 @@ class Person extends StrictObject implements Entity
     public function getPropertiesByLevels(Tables $tables): PropertiesByLevels
     {
         if ($this->propertiesByLevels === null) {
-            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
             $this->propertiesByLevels = new PropertiesByLevels( // enums aggregate
                 $this->getRace(),
                 $this->getGenderCode(),
@@ -313,10 +315,11 @@ class Person extends StrictObject implements Entity
 
     /**
      * @param Tables $tables
+     * @param Armourer $armourer
      * @return CurrentProperties
      * @throws \DrdPlus\CurrentProperties\Exceptions\CanNotUseArmamentBecauseOfMissingStrength
      */
-    public function getCurrentProperties(Tables $tables): CurrentProperties
+    public function getCurrentProperties(Tables $tables, Armourer $armourer): CurrentProperties
     {
         return new CurrentProperties(
             $this->getPropertiesByLevels($tables),
@@ -325,7 +328,8 @@ class Person extends StrictObject implements Entity
             $this->getEquipment()->getWornBodyArmor(),
             $this->getEquipment()->getWornHelm(),
             $this->getEquipment()->getWeight($tables->getWeightTable()),
-            $tables
+            $tables,
+            $armourer
         );
     }
 

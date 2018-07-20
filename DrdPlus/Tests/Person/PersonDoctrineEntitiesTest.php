@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace DrdPlus\Tests\Person;
 
 use Doctrineum\Tests\Entity\AbstractDoctrineEntitiesTest;
@@ -56,6 +58,11 @@ use Granam\Integer\PositiveIntegerObject;
 
 class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
 {
+    /**
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
+     */
     protected function setUp()
     {
         PersonEnumsRegistrar::registerAll();
@@ -125,7 +132,7 @@ class PersonDoctrineEntitiesTest extends AbstractDoctrineEntitiesTest
     private function createPersonEntity(Tables $tables): Person
     {
         return new Person(
-            new Name('foo'),
+            Name::getEnum('foo'),
             CommonHuman::getIt(),
             GenderCode::getIt(GenderCode::MALE),
             new ChosenProperties(

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 namespace DrdPlus\Tests\Person\Attributes;
 
 use DrdPlus\Person\Attributes\Name;
@@ -10,9 +12,9 @@ class NameTest extends TestCase
     /**
      * @test
      */
-    public function I_can_create_it()
+    public function I_can_create_it(): void
     {
-        $name = new Name($value = 'foo');
+        $name = Name::getIt($value = 'foo');
         self::assertInstanceOf(Name::class, $name);
         self::assertSame($value, $name->getValue());
         self::assertSame($value, (string)$name);
@@ -21,11 +23,11 @@ class NameTest extends TestCase
     /**
      * @test
      */
-    public function I_can_detect_if_is_empty()
+    public function I_can_detect_if_is_empty(): void
     {
-        $emptyName = new Name('');
+        $emptyName = Name::getIt('');
         self::assertTrue($emptyName->isEmpty());
-        $filledName = new Name('foo');
+        $filledName = Name::getIt('foo');
         self::assertFalse($filledName->isEmpty());
     }
 }
