@@ -13,7 +13,6 @@ use DrdPlus\Codes\RaceCode;
 use DrdPlus\Codes\SubRaceCode;
 use DrdPlus\CurrentProperties\CurrentProperties;
 use DrdPlus\Equipment\Equipment;
-use DrdPlus\Person\Attributes\EnumTypes\NameType;
 use DrdPlus\Person\Attributes\Name;
 use DrdPlus\Background\Background;
 use DrdPlus\GamingSession\Memories;
@@ -23,13 +22,13 @@ use DrdPlus\Person\ProfessionLevels\ProfessionFirstLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevel;
 use DrdPlus\Person\ProfessionLevels\ProfessionLevels;
 use DrdPlus\Professions\Profession;
-use DrdPlus\Properties\Base\Agility;
-use DrdPlus\Properties\Base\BaseProperty;
-use DrdPlus\Properties\Base\Charisma;
-use DrdPlus\Properties\Base\Intelligence;
-use DrdPlus\Properties\Base\Knack;
-use DrdPlus\Properties\Base\Strength;
-use DrdPlus\Properties\Base\Will;
+use DrdPlus\BaseProperties\Agility;
+use DrdPlus\BaseProperties\BaseProperty;
+use DrdPlus\BaseProperties\Charisma;
+use DrdPlus\BaseProperties\Intelligence;
+use DrdPlus\BaseProperties\Knack;
+use DrdPlus\BaseProperties\Strength;
+use DrdPlus\BaseProperties\Will;
 use DrdPlus\Properties\Body\Age;
 use DrdPlus\Properties\Body\HeightInCm;
 use DrdPlus\Properties\Body\BodyWeightInKg;
@@ -74,7 +73,6 @@ class PersonTest extends TestWithMockery
             $tables
         );
         self::assertNotNull($person);
-        self::assertNull($person->getId());
 
         self::assertSame($race, $person->getRace());
         self::assertSame($gender, $person->getGenderCode());
@@ -126,7 +124,6 @@ class PersonTest extends TestWithMockery
 
     /**
      * @test
-     * @throws \Doctrine\DBAL\DBALException
      */
     public function I_can_change_name(): void
     {
@@ -146,7 +143,6 @@ class PersonTest extends TestWithMockery
             Tables::getIt()
         );
         self::assertSame($oldName, $person->getName());
-        NameType::registerSelf();
         $name = Name::getIt($nameString = 'foo');
         self::assertNotSame($oldName, $name);
         $person->setName($name);

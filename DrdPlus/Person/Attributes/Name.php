@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace DrdPlus\Person\Attributes;
 
-use Doctrineum\Scalar\ScalarEnum;
-use Doctrineum\Scalar\ScalarEnumInterface;
 use Granam\Scalar\Tools\ToString;
+use Granam\ScalarEnum\ScalarEnum;
+use Granam\ScalarEnum\ScalarEnumInterface;
 use Granam\String\StringInterface;
 
 class Name extends ScalarEnum implements StringInterface
@@ -28,17 +28,11 @@ class Name extends ScalarEnum implements StringInterface
         parent::__construct(\trim(ToString::toString($value)));
     }
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool
     {
         return $this->getValue() === '';
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return parent::getValue();

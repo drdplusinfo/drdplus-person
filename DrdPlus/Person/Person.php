@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace DrdPlus\Person;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrineum\Entity\Entity;
 use DrdPlus\Armourer\Armourer;
 use DrdPlus\Codes\GenderCode;
 use DrdPlus\CurrentProperties\CurrentProperties;
@@ -28,34 +26,22 @@ use DrdPlus\Tables\Measurements\Experiences\Level as LevelBonus;
 use DrdPlus\Tables\Tables;
 use Granam\Strict\Object\StrictObject;
 
-/**
- * @ORM\Entity()
- */
-class Person extends StrictObject implements Entity
+class Person extends StrictObject
 {
     /**
-     * @var integer
-     * @ORM\Column(type="integer") @ORM\Id @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-    /**
      * @var Name
-     * @ORM\Column(type="name")
      */
     private $name;
     /**
      * @var Race
-     * @ORM\Column(type="race")
      */
     private $race;
     /**
      * @var GenderCode
-     * @ORM\Column(type="gender_code")
      */
     private $genderCode;
     /**
      * @var PropertiesByFate
-     * @ORM\OneToOne(targetEntity="\DrdPlus\PropertiesByFate\PropertiesByFate", cascade={"persist"})
      */
     private $propertiesByFate;
     /**
@@ -65,52 +51,42 @@ class Person extends StrictObject implements Entity
     private $propertiesByLevels;
     /**
      * @var ProfessionLevels
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Person\ProfessionLevels\ProfessionLevels", cascade={"persist"})
      */
     private $professionLevels;
     /**
      * @var Memories
-     * @ORM\OneToOne(targetEntity="\DrdPlus\GamingSession\Memories", cascade={"persist"})
      */
     private $memories;
     /**
      * @var Health
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Health\Health", cascade={"persist"})
      */
     private $health;
     /**
      * @var Stamina
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Stamina\Stamina", cascade={"persist"})
      */
     private $stamina;
     /**
      * @var Background
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Background\Background", cascade={"persist"})
      */
     private $background;
     /**
      * @var Skills
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Skills\Skills", cascade={"persist"})
      */
     private $skills;
     /**
      * @var BodyWeightInKg
-     * @ORM\Column(type="body_weight_in_kg")
      */
     private $bodyWeightInKgAdjustment;
     /**
      * @var HeightInCm
-     * @ORM\Column(type="height_in_cm")
      */
     private $heightInCm;
     /**
      * @var Age
-     * @ORM\Column(type="age")
      */
     private $age;
     /**
      * @var Equipment
-     * @ORM\OneToOne(targetEntity="\DrdPlus\Equipment\Equipment", cascade={"persist"})
      */
     private $equipment;
 
@@ -131,19 +107,19 @@ class Person extends StrictObject implements Entity
      * @throws \DrdPlus\Person\Exceptions\InsufficientExperiences
      */
     public function __construct(
-        Name $name, // value
-        Race $race, // enum (value)
-        GenderCode $genderCode, // enum (value)
-        PropertiesByFate $propertiesByFate, // entity
-        Memories $memories, // entity
-        ProfessionLevels $professionLevels, // entity
-        Background $background, // entity
-        Skills $skills, // entity
-        BodyWeightInKg $weightInKgAdjustment, // enum (value)
-        HeightInCm $heightInCm, // enum (value)
-        Age $age, // enum (value)
-        Equipment $equipment, // entity
-        Tables $tables // data helper (can not be persisted)
+        Name $name,
+        Race $race,
+        GenderCode $genderCode,
+        PropertiesByFate $propertiesByFate,
+        Memories $memories,
+        ProfessionLevels $professionLevels,
+        Background $background,
+        Skills $skills,
+        BodyWeightInKg $weightInKgAdjustment,
+        HeightInCm $heightInCm,
+        Age $age,
+        Equipment $equipment,
+        Tables $tables
     )
     {
         $this->name = $name;
@@ -191,11 +167,6 @@ class Person extends StrictObject implements Entity
         }
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     /**
      * Name is an enum, therefore a constant in fact, therefore only way how to change the name is to replace it
      *
@@ -209,81 +180,51 @@ class Person extends StrictObject implements Entity
         return $this;
     }
 
-    /**
-     * @return Name
-     */
     public function getName(): Name
     {
         return $this->name;
     }
 
-    /**
-     * @return Race
-     */
     public function getRace(): Race
     {
         return $this->race;
     }
 
-    /**
-     * @return GenderCode
-     */
     public function getGenderCode(): GenderCode
     {
         return $this->genderCode;
     }
 
-    /**
-     * @return PropertiesByFate
-     */
     public function getPropertiesByFate(): PropertiesByFate
     {
         return $this->propertiesByFate;
     }
 
-    /**
-     * @return Memories
-     */
     public function getMemories(): Memories
     {
         return $this->memories;
     }
 
-    /**
-     * @return Health
-     */
     public function getHealth(): Health
     {
         return $this->health;
     }
 
-    /**
-     * @return Stamina
-     */
     public function getStamina(): Stamina
     {
         return $this->stamina;
     }
 
-    /**
-     * @return ProfessionLevels
-     */
     public function getProfessionLevels(): ProfessionLevels
     {
         return $this->professionLevels;
     }
 
-    /**
-     * @return Background
-     */
     public function getBackground(): Background
     {
         return $this->background;
     }
 
-    /**
-     * @return Skills
-     */
     public function getSkills(): Skills
     {
         return $this->skills;
@@ -333,17 +274,11 @@ class Person extends StrictObject implements Entity
         );
     }
 
-    /**
-     * @return \DrdPlus\Professions\Profession
-     */
     public function getProfession(): Profession
     {
         return $this->getProfessionLevels()->getFirstLevel()->getProfession();
     }
 
-    /**
-     * @return Equipment
-     */
     public function getEquipment(): Equipment
     {
         return $this->equipment;
